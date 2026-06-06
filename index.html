@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SKU Penegak: Panel Admin Mutlak</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background-color: #5c1d1b !important; border-bottom: 4px solid #ffc107; }
+        .card-header { background-color: #421413; color: white; font-weight: 600; }
+        .row-main-soal { background-color: #eaeaea !important; font-weight: bold; }
+        .admin-only { display: none; } /* Tersembunyi sebelum login */
+        @media print {
+            .no-print, .form-switch, .form-control, .form-select, .btn, .input-group { display: none !important; }
+            body { background-color: #fff; }
+            .print-text { display: inline-block !important; }
+            table { width: 100% !important; border: 1px solid #000 !important; }
+            th, td { border: 1px solid #000 !important; padding: 6px !important; }
+        }
+        .print-text { display: none; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark shadow mb-4 no-print">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-user-shield text-warning fs-3 me-2"></i>
+                <div>
+                    <span class="fw-bold d-block">E-SKU PRAMUKA PENEGAK</span>
+                    <small class="fs-7 text-white-50">Sistem Kendali Verval Khusus Pembina</small>
+                </div>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <span id="admin-status-text" class="text-white-50 small me-2"><i class="fas fa-user-lock"></i> Mode Tamu (Read-Only)</span>
+                <button id="btn-login-logout" class="btn btn-sm btn-warning fw-bold" onclick="handleAuthAction()"><i class="fas fa-sign-in-alt"></i> Login Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        
+        <div class="card border-primary shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-users-cog me-2"></i> Navigasi Anggota (1 Halaman 1 Nama)</span>
+                <button class="btn btn-xs btn-light fw-bold admin-only" onclick="bukaModalAnggota()"><i class="fas fa-plus-circle"></i> Tambah Anggota Baru</button>
+            </div>
+            <div class="card-body bg-light">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-primary">Pilih Data Anggota Pramuka:</label>
+                        <select id="select-anggota-aktif" class="form-select border-primary fw-bold" onchange="gantiAnggotaAktif()">
+                            </select>
+                    </div>
+                    <div class="col-md-4 no-print">
+                        <label class="form-label fw-bold text-success"><i class="fas fa-search me-1"></i> Cari Nama Anggota:</label>
+                        <div class="input-group">
+                            <input type="text" id="input-cari-anggota" class="form-control border-success" placeholder="Ketik nama siswa..." oninput="cariNamaAnggotaRealtime()">
+                            <button class="btn btn-success" type="button" onclick="resetPencarian()" title="Reset Pencarian"><i class="fas fa-undo"></i></button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 d-flex gap-2 justify-content-end no-print admin-only">
+                        <button class="btn btn-outline-secondary" onclick="bukaModalAnggota(true)"><i class="fas fa-edit"></i> Edit Profil Ini</button>
+                        <button class="btn btn-outline-danger" onclick="hapusAnggotaAktif()"><i class="fas fa-trash-alt"></i> Hapus Anggota Ini</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header"><i class="fas fa-id-card me-2 text-warning"></i> Atribut Profil Anggota</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Nama Lengkap</label>
+                        <div id="p-nama" class="form-control-plaintext border-bottom fw-bold text-dark">-</div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Nomor Gudep</label>
+                        <div id="p-gudep" class="form-control-plaintext border-bottom">-</div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Nama Sangga</label>
+                        <div id="p-sangga" class="form-control-plaintext border-bottom">-</div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold text-danger">Tingkat SKU Aktif</label>
+                        <select id="pilihan-tingkat" class="form-select border-danger fw-bold text-danger" onchange="renderTabelSKU()">
+                            </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Agama (Materi No. 1)</label>
+                        <select id="pilihan-agama" class="form-select border-primary" onchange="renderTabelSKU()" disabled>
+                            <option value="islam">Islam</option>
+                            <option value="katolik">Katolik</option>
+                            <option value="protestan">Kristen Protestan</option>
+                            <option value="hindu">Hindu</option>
+                            <option value="budha">Budha</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4 no-print">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div class="w-100 me-3">
+                    <h5 class="card-title fw-bold text-muted mb-1">Progres Capaian Verval Individu</h5>
+                    <div class="progress" style="height: 25px;">
+                        <div id="progress-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated fw-bold" style="width: 0%;">0%</div>
+                    </div>
+                </div>
+                <div class="text-end flex-shrink-0">
+                    <span class="badge bg-dark fs-6 p-2" id="stat-count">0 / 0 Butir</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-clipboard-check text-warning me-2"></i> Matriks Lembar Kendali SKU Terpilih</span>
+                <span class="badge bg-warning text-dark fw-bold" id="table-badge-tingkat">BANTARA</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover table-bordered align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th style="width: 8%;" class="text-center">No. SKU</th>
+                            <th style="width: 47%;">Butir Pertanyaan / Indikator Pencapaian</th>
+                            <th style="width: 12%;" class="text-center">Status Verval</th>
+                            <th style="width: 15%;" class="text-center">Tanggal Uji</th>
+                            <th style="width: 18%;" class="text-center">Tanda Tangan / Penguji</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sku-tbody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 no-print">
+            <button class="btn btn-warning text-dark fw-bold" onclick="window.print()"><i class="fas fa-print me-1"></i> Cetak Lembar Kendali Anggota Ini</button>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="modalAnggota" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modal-anggota-title">Tambah Anggota</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form-anggota">
+                        <input type="hidden" id="form-id-anggota">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nama Lengkap Siswa</label>
+                            <input type="text" id="form-nama" class="form-control" required placeholder="Contoh: Ahmad Dhani">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nomor Gudep</label>
+                            <input type="text" id="form-gudep" class="form-control" required placeholder="Contoh: 04.112">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nama Sangga</label>
+                            <input type="text" id="form-sangga" class="form-control" required placeholder="Contoh: Pencoba">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold d-block">Tingkat Penegak (Bisa Centang Keduanya)</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="check-bantara" value="bantara">
+                                <label class="form-check-label fw-bold text-warning" for="check-bantara">Bantara</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="check-laksana" value="laksana">
+                                <label class="form-check-label fw-bold text-danger" for="check-laksana">Laksana</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Agama</label>
+                            <select id="form-agama" class="form-select">
+                                <option value="islam">Islam</option>
+                                <option value="katolik">Katolik</option>
+                                <option value="protestan">Kristen Protestan</option>
+                                <option value="hindu">Hindu</option>
+                                <option value="budha">Budha</option>
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan Data</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="fas fa-lock"></i> Login Admin</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Username</label>
+                        <input type="text" id="login-username" class="form-control" value="admin">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Password</label>
+                        <input type="password" id="login-password" class="form-control">
+                    </div>
+                    <button class="btn btn-danger w-100 fw-bold" onclick="submitLogin()">Masuk Sistem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATA STATE SISTEM
+        let IS_ADMIN = false;
+        let daftarAnggota = [];
+        let idAnggotaAktif = null;
+
+        let modalLoginBootstrap;
+        let modalAnggotaBootstrap;
+
+        // DB SOAL BANTARA
+        const dataBantara = {
+            1: { teks: "Agama", isAgama: true, subAgama: { islam: ["Dapat menjelaskan makna Rukun Iman dan Rukun Islam", "Mampu menjelaskan makna Sholat berjamaah dan dapat mendirikan Sholat sunah secara individu", "Mampu menjelaskan makna berpuasa serta macam-macam Puasa", "Tahu tata cara merawat atau mengurus jenazah (Tajhizul Jenazah)", "Dapat membaca doa Ijab Qobul Zakat", "Dapat menghafal minimal sebuah hadist dan menjelaskan hadist tersebut"], katolik: ["Tahu dan paham makna dan arti Gereja Katolik", "Dapat memimpin doa dan membangun serta membuat gerakan cinta kasih pada keberagaman agama di luar Gereja Katolik"], protestan: ["Mendalami Hukum Kasih dan mengamalkannya dalam kehidupan sehari-hari"], hindu: ["Dapat menjelaskan sejarah perkembangan agama Hindu di Indonesia", "Dapat menjelaskan makna dan hakikat dari tujuan melaksanakan persembahyangan sehari-hari dan hari besar keagamaan Hindu", "Dapat menjelaskan maksud dan tujuan kelahiran menjadi manusia menurut agama Hindu", "Dapat menjelaskan makna dan hakekat ajaran Tri Hita Karana dengan pelestarian alam lingkungan", "Dapat mempraktikkan bentuk gerakan Asanas dari Hatta Yoga", "Dapat melafalkan dan mengkidungkan salah satu bentuk Dharma Gita", "Dapat mendeskripsikan struktur, fungsi dan sejarah pura dalam cakupan Sad Kahyangan"], budha: ["Saddha - Mengungkapkan Buddha Dharma sebagai salah satu agama", "Merumuskan dasar-dasar keyakinan dan cara mengembangkannya", "Menjelaskan sejarah Buddha Gotama", "Menjelaskan Tiratana sebagai pelindung", "Menjelaskan kisah-kisah sejarah penulisan kitab suci tripitaka"] } },
+            2: { teks: "Berani menyampaikan kritik dan saran dengan sopan dan santun kepada sesama teman", pencapaian: ["Dapat menyampaikan kritik dan saran dengan sopan dan santun kepada sesama teman"] },
+            3: { teks: "Dapat mengikuti jalannya diskusi dengan baik", pencapaian: ["Memahami Tata tertib berdiskusi", "Turut aktif dalam suatu proses diskusi"] },
+            4: { teks: "Teknik Kepramukaan: Dapat saling menghormati dan toleransi dalam bakti antar umat beragama", pencapaian: ["Mampu saling menghormati dan toleransi dalam bakti antar umat beragama"] },
+            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 2 kali setiap month/bulan", pencapaian: ["Mengikuti pertemuan Ambalan sekurang-kurangnya 2 kali setiap bulan"] },
+            6: { teks: "Setia membayar iuran kepada gugus depan, dengan uang yang diperoleh dari usaha sendiri.", pencapaian: ["Membayar iuran kepada gugus depan dengan uang dari usaha sendiri"] },
+            7: { teks: "Dapat berbahasa Indonesia dengan baik dan benar dalam pergaulan sehari-hari.", pencapaian: ["Menggunakan bahasa Indonesia dengan baik dan benar dalam pergaulan sehari-hari"] },
+            8: { teks: "Telah membantu mengelola kegiatan di Ambalan.", pencapaian: ["Aktif membantu mengelola kegiatan di Ambalan"] },
+            9: { teks: "Telah ikut aktif kerja bakti di masyarakat minimal 2 kali.", pencapaian: ["Ikut aktif kerja bakti di masyarakat minimal 2 kali"] },
+            10: { teks: "Dapat menampilkan kesenian daerah di depan umum minimal satu kali.", pencapaian: ["Menampilkan kesenian daerah di depan umum minimal satu kali"] },
+            11: { teks: "Mengenal, mengerti dan memahami isi AD & ART Gerakan Pramuka.", pencapaian: ["Memahami isi materi AD & ART Gerakan Pramuka"] },
+            12: { teks: "Dapat menjelaskan sejarah Kepramukaan Indonesia dan Dunia.", pencapaian: ["Menjelaskan sejarah Kepramukaan Indonesia dan Dunia"] },
+            13: { teks: "Dapat menggunakan jam, kompas, tanda jejak dan tanda-tanda alam lainnya dalam pengembaraan.", pencapaian: ["Mampu menggunakan jam, kompas, tanda jejak dan tanda alam saat pengembaraan"] },
+            14: { teks: "Dapat menjelaskan bentuk pengamalan Pancasila dalam kehidupan sehari-hari.", pencapaian: ["Menjelaskan bentuk pengamalan Pancasila dalam kehidupan sehari-hari"] },
+            15: { teks: "Dapat menjelaskan tentang organisasi ASEAN dan PBB.", pencapaian: ["Menjelaskan tentang organisasi ASEAN dan PBB"] },
+            16: { teks: "Dapat menjelaskan tentang kewirausahaan.", pencapaian: ["Dapat menjelaskan tentang materi kewirausahaan"] },
+            17: { teks: "Dapat mendaur ulang barang bekas menjadi barang yang bermanfaat.", pencapaian: ["Mendaur ulang barang bekas menjadi barang yang bermanfaat"] },
+            18: { teks: "Dapat menerapkan pengetahuannya tentang tali temali dan pionering dalam kehidupan sehari-hari.", pencapaian: ["Menerapkan ilmu tali temali dan pionering di kehidupan sehari-hari"] },
+            19: { teks: "Selalu berolahraga, mampu melakukan olahraga renang gaya bebas dan menguasai 1 (satu) cabang olahraga tim.", pencapaian: ["Aktif berolahraga & menguasai renang gaya bebas / cabang olahraga tim"] },
+            20: { teks: "Dapat menjelaskan perkembangan fisik laki-laki dan perempuan.", pencapaian: ["Menjelaskan perkembangan fisik laki-laki dan perempuan"] },
+            21: { teks: "Dapat memimpin baris berbaris dan menjelaskan peraturannya kepada anggota sangganya", pencapaian: ["Memimpin baris berbaris dan menjelaskan peraturannya kepada anggota sangga"] },
+            22: { teks: "Dapat menyebutkan beberapa penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat.", pencapaian: ["Menyebutkan penyakit infeksi, degeneratif, dan perilaku tidak sehat"] },
+            23: { teks: "Ikut serta dalam perkemahan selama 3 hari berturut – turut.", pencapaian: ["Ikut serta dalam perkemahan selama 3 hari berturut–turut"] }
+        };
+
+        // DB SOAL LAKSANA
+        const dataLaksana = {
+            1: { teks: "Agama", isAgama: true, subAgama: { islam: ["Dapat menjelaskan makna Rukun Iman dan Rukun Islam di muka Pasukan Penggalang atau Ambalan Penegak", "Dapat menjelaskan rukun sholat dan dapat mendirikan sholat sunah", "Dapat menjelaskan rukun puasa serta dapat melakukan salah satu puasa sunah", "Memahami tata cara merawat/mengurus jenazah", "Pernah menjadi amil zakat", "Dapat menghafal ayat tematik dari Al-Quran dan mampu menjelaskannya"], katolik: ["Memahami dan mendalami 7 sakramen", "Menghayati dan dapat menceritakan riwayat salah satu Santo / Santa", "Membahas 10 Perintah Allah, dilengkapi dengan contoh kehidupan sehari-hari"], protestan: ["Dapat memberi kesaksian di depan jemaat atau teman sebaya", "Dapat berpartisipasi aktif dalam pelayanan Gereja sesuai bakat dan kemampuannya", "Telah mengikuti pengajaran Agama (Katekisasi)"], hindu: ["Dapat menjelaskan sejarah kerajaan / candi-candi agama Hindu di Indonesia", "Dapat melafalkan dan bertindak sebagai pemimpin persembahyangan Panca Sembah", "Dapat menjelaskan Samsara / Punarbawa atau reinkarnasi sebagai bentuk untuk penyempurnaan kelahiran berikutnya", "Dapat menjelaskan konsep Ajaran Asta Brata", "Dapat melakukan gerakan dan menjelaskan fungsi, serta manfaat dari setiap gerakan Yoga Asanas", "Dapat melafalkan dan mengidungkan lebih dari satu bentuk Dharma Gita", "Dapat menjelaskan esensi ajaran Hindu dalam kehidupan"], budha: ["Dapat memimpin dan mengorganisir kebaktian (pagi dan sore) serta perayaan hari-hari besar Agama Buddha (Waisak, Asadha, Kathina, Maggapuja)", "Saddha: Mendiskripsikan ruang lingkup dan intisari Tripitaka", "Menjelaskan makna dan manfaat puja serta doa", "Mendiskripsikan sila sebagai bagian dari jalan mulia berunsur delapan", "Menjelaskan kebenaran yang terdapat dalam Tripitaka"] } },
+            2: { teks: "Dapat menerima kritik dari orang lain, serta berani mengeluarkan pendapatnya dengan tertib, sopan dan santun kepada orang-orang di sekitarnya", pencapaian: ["Menerima kritik & berani berpendapat dengan tertib, sopan, santun"] },
+            3: { teks: "Dapat mengikuti dan atau memimpin diskusi Ambalan dan mampu mengambil keputusan", pencapaian: ["Mengikuti / memimpin diskusi Ambalan dan mengambil keputusan"] },
+            4: { teks: "Dapat menjadi penengah (memberi solusi), jika terjadi ketidaksepahaman dalam kelompoknya", pencapaian: ["Menjadi penengah dan memberi solusi pemecahan masalah kelompok"] },
+            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 3 kali setiap bulan", pencapaian: ["Mengikuti pertemuan Ambalan sekurang-kurangnya 3 kali setiap bulan"] },
+            6: { teks: "Setia membayar iuran kepada gugus depannya, dengan uang diperoleh dari usaha sendiri, serta membantu Ambalan dalam mengelola administrasi keuangan", pencapaian: ["Membayar iuran dari usaha sendiri dan mengelola administrasi keuangan"] },
+            7: { teks: "Dapat memimpin rapat dan membuat risalah dengan baik", pencapaian: ["Memimpin rapat Ambalan dan menyusun berkas risalah rapat"] },
+            8: { teks: "Pernah memimpin kegiatan di tingkat Ambalan", pencapaian: ["Pernah menjadi Ketua Panitia / Sangga Kerja kegiatan Ambalan"] },
+            9: { teks: "Pernah memimpin kerja bakti di masyarakat minimal 2 kali", pencapaian: ["Memimpin pelaksanaan kerja bakti di masyarakat minimal 2 kali"] },
+            10: { teks: "Dapat memimpin kelompok dalam menampilkan salah satu jenis kesenian daerah", pencapaian: ["Memimpin kelompok menampilkan salah satu jenis kesenian daerah"] },
+            11: { teks: "Dapat menjelaskan isi AD & ART Gerakan Pramuka kepada Ambalan", pencapaian: ["Menjelaskan poin penting isi AD & ART Gerakan Pramuka kepada Ambalan"] },
+            12: { teks: "Dapat menjelaskan di muka umum tentang sejarah kepramukaan Indonesia dan dunia", pencapaian: ["Menjelaskan di muka umum tentang sejarah pramuka Indonesia & dunia"] },
+            13: { teks: "Dapat melakukan pengembaraan selama 3 hari dan atau mengatur kehidupan perkemahan selama minimal 3 hari", pencapaian: ["Melakukan pengembaraan / mengatur manajemen perkemahan minimal 3 hari"] },
+            14: { teks: "Dapat menjelaskan sejarah, arti, tatacara penggunaan dan kiasan Sang Merah Putih", pencapaian: ["Menjelaskan sejarah, arti, tata cara, dan kiasan Sang Merah Putih"] },
+            15: { teks: "Dapat menjelaskan peran Indonesia dalam organisasi ASEAN dan PBB", pencapaian: ["Menjelaskan peran penting Indonesia dalam organisasi ASEAN dan PBB"] },
+            16: { teks: "Telah memiliki keterampilan kewirausahaan yang dapat menghasilkan uang", pencapaian: ["Memiliki bukti produk/jasa kewirausahaan yang menghasilkan uang"] },
+            17: { teks: "Dapat membuat salah satu jenis peralatan teknologi tepat guna", pencapaian: ["Membuat salah satu jenis peralatan teknologi tepat guna (TTG)"] },
+            18: { teks: "Secara berkelompok dapat membuat struktur dari keterampilan tali temali dan pionering, yang dapat digunakan masyarakat", pencapaian: ["Membuat bangunan pionering kelompok yang bermanfaat bagi masyarakat"] },
+            19: { teks: "Selalu berolahraga, Dapat melakukan olahraga renang selain gaya bebas dan menguasai 1 (satu) cabang olahraga lainnya", pencapaian: ["Bisa renang gaya selain gaya bebas & menguasai 1 cabang olahraga lain"] },
+            20: { teks: "Dapat memahami dan menjelaskan tentang kesehatan reproduksi", pencapaian: ["Memahami dan menjelaskan konsep kesehatan reproduksi remaja"] },
+            21: { teks: "Dapat mempersiapkan dan melaksanakan upacara umum minimal 3 kali", pencapaian: ["Mempersiapkan dan bertindak sebagai petugas upacara umum minimal 3 kali"] },
+            22: { teks: "Dapat menyebutkan penyebab dan cara pencegahan penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat", pencapaian: ["Menjelaskan penyebab & pencegahan penyakit infeksi, degeneratif, & tidak sehat"] }
+        };
+
+        // KONTROL OTENTIKASI
+        function handleAuthAction() {
+            if (IS_ADMIN) {
+                IS_ADMIN = false;
+                alert("Anda keluar dari mode Admin.");
+                perbaruiTampilanAksesAdmin();
+            } else {
+                modalLoginBootstrap.show();
+            }
+        }
+
+        function submitLogin() {
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+
+            if (user === 'admin' && pass === 'pramuka123') {
+                IS_ADMIN = true;
+                modalLoginBootstrap.hide();
+                alert("Login Berhasil! Akses Tambah, Edit, Hapus data dibuka.");
+                perbaruiTampilanAksesAdmin();
+                document.getElementById('login-password').value = '';
+            } else {
+                alert("Kombinasi Username / Password Salah!");
+            }
+        }
+
+        function perbaruiTampilanAksesAdmin() {
+            const elements = document.querySelectorAll('.admin-only');
+            const statusText = document.getElementById('admin-status-text');
+            const btnAuth = document.getElementById('btn-login-logout');
+
+            if (IS_ADMIN) {
+                elements.forEach(el => el.style.setProperty('display', 'block', 'important'));
+                statusText.innerHTML = `<span class="badge bg-success"><i class="fas fa-unlock"></i> ADMIN ACTIVE</span>`;
+                btnAuth.innerHTML = `<i class="fas fa-sign-out-alt"></i> Keluar Admin`;
+            } else {
+                elements.forEach(el => el.style.setProperty('display', 'none', 'important'));
+                statusText.innerHTML = `<i class="fas fa-user-lock"></i> Mode Tamu (Read-Only)`;
+                btnAuth.innerHTML = `<i class="fas fa-sign-in-alt"></i> Login Admin`;
+            }
+            renderTabelSKU(); 
+        }
+
+        // KONTROL MANAJEMEN DATA
+        function muatDaftarAnggotaDariStorage() {
+            daftarAnggota = JSON.parse(localStorage.getItem('esku_daftar_anggota')) || [];
+            if (daftarAnggota.length === 0) {
+                daftarAnggota = [
+                    { id: 17170001, nama: "Zainal Arifin", gudep: "02.345", sangga: "Perintis", tingkat: ["bantara"], agama: "islam" },
+                    { id: 17170002, nama: "Maria Olivia", gudep: "02.346", sangga: "Pelaksana", tingkat: ["bantara", "laksana"], agama: "katolik" }
+                ];
+                localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
+            }
+            idAnggotaAktif = JSON.parse(localStorage.getItem('esku_id_anggota_aktif')) || daftarAnggota[0].id;
+            isiDropdownAnggota();
+        }
+
+        function isiDropdownAnggota(filterDaftar = null) {
+            const select = document.getElementById('select-anggota-aktif');
+            select.innerHTML = '';
+            
+            // Menggunakan daftar yang difilter jika ada pencarian, jika tidak gunakan seluruh ambalan
+            const dataLoop = filterDaftar ? filterDaftar : daftarAnggota;
+
+            if(dataLoop.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "-- Nama Tidak Ditemukan --";
+                select.appendChild(opt);
+                return;
+            }
+
+            dataLoop.forEach(ang => {
+                const opt = document.createElement('option');
+                opt.value = ang.id;
+                const txtTingkat = Array.isArray(ang.tingkat) ? ang.tingkat.map(t => t.toUpperCase()).join(" & ") : ang.tingkat.toUpperCase();
+                opt.textContent = `${ang.nama} [Sangga ${ang.sangga} - ${txtTingkat}]`;
+                if (ang.id == idAnggotaAktif) opt.selected = true;
+                select.appendChild(opt);
+            });
+            tampilkanProfilAktif();
+        }
+
+        // PERUBAHAN: Fungsi filter pencarian nama secara real-time
+        function cariNamaAnggotaRealtime() {
+            const keyword = document.getElementById('input-cari-anggota').value.toLowerCase().trim();
+            if (keyword === "") {
+                isiDropdownAnggota();
+                return;
+            }
+
+            const hasilFilter = daftarAnggota.filter(ang => ang.nama.toLowerCase().includes(keyword));
+            
+            // Jika ada hasil, otomatis pindahkan fokus anggota aktif ke baris pertama hasil pencarian
+            if (hasilFilter.length > 0) {
+                idAnggotaAktif = hasilFilter[0].id;
+                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
+            }
+            
+            isiDropdownAnggota(hasilFilter);
+        }
+
+        // PERUBAHAN: Fungsi tombol reset pencarian
+        function resetPencarian() {
+            document.getElementById('input-cari-anggota').value = "";
+            muatDaftarAnggotaDariStorage();
+        }
+
+        function tampilkanProfilAktif() {
+            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
+            if (anggota) {
+                document.getElementById('p-nama').textContent = anggota.nama;
+                document.getElementById('p-gudep').textContent = anggota.gudep;
+                document.getElementById('p-sangga').textContent = anggota.sangga;
+                document.getElementById('pilihan-agama').value = anggota.agama;
+                
+                const selectTingkatDashboard = document.getElementById('pilihan-tingkat');
+                selectTingkatDashboard.innerHTML = '';
+                
+                const listTingkat = Array.isArray(anggota.tingkat) ? anggota.tingkat : [anggota.tingkat];
+                listTingkat.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.textContent = `PENEGAK ${t.toUpperCase()}`;
+                    selectTingkatDashboard.appendChild(opt);
+                });
+                
+                renderTabelSKU();
+            } else {
+                // Bersihkan jika kosong/tidak ditemukan
+                document.getElementById('p-nama').textContent = "-";
+                document.getElementById('p-gudep').textContent = "-";
+                document.getElementById('p-sangga').textContent = "-";
+                document.getElementById('sku-tbody').innerHTML = '<tr><td colspan="5" class="text-center p-4 text-muted">Silakan tentukan atau reset pencarian nama siswa.</td></tr>';
+            }
+        }
+
+        function gantiAnggotaAktif() {
+            const val = document.getElementById('select-anggota-aktif').value;
+            if(!val) return;
+            idAnggotaAktif = val;
+            localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
+            tampilkanProfilAktif();
+        }
+
+        function bukaModalAnggota(isEdit = false) {
+            if (!IS_ADMIN) {
+                alert("Akses ditolak! Hanya Admin Login yang bisa memanipulasi data.");
+                return;
+            }
+            document.getElementById('form-anggota').reset();
+            document.getElementById('check-bantara').checked = false;
+            document.getElementById('check-laksana').checked = false;
+            
+            if (isEdit) {
+                document.getElementById('modal-anggota-title').textContent = "Ubah Data Profil Anggota";
+                const ang = daftarAnggota.find(a => a.id == idAnggotaAktif);
+                if (ang) {
+                    document.getElementById('form-id-anggota').value = ang.id;
+                    document.getElementById('form-nama').value = ang.nama;
+                    document.getElementById('form-gudep').value = ang.gudep;
+                    document.getElementById('form-sangga').value = ang.sangga;
+                    document.getElementById('form-agama').value = ang.agama;
+                    
+                    const listTingkat = Array.isArray(ang.tingkat) ? ang.tingkat : [ang.tingkat];
+                    if(listTingkat.includes('bantara')) document.getElementById('check-bantara').checked = true;
+                    if(listTingkat.includes('laksana')) document.getElementById('check-laksana').checked = true;
+                }
+            } else {
+                document.getElementById('modal-anggota-title').textContent = "Tambah Anggota Pramuka Baru";
+                document.getElementById('form-id-anggota').value = '';
+                document.getElementById('check-bantara').checked = true;
+            }
+            modalAnggotaBootstrap.show();
+        }
+
+        document.getElementById('form-anggota').onsubmit = function(e) {
+            e.preventDefault();
+            if (!IS_ADMIN) {
+                alert("Akses Ilegal! Anda tidak memiliki hak menyimpan data.");
+                return;
+            }
+            
+            const id = document.getElementById('form-id-anggota').value;
+            const nama = document.getElementById('form-nama').value;
+            const gudep = document.getElementById('form-gudep').value;
+            const sangga = document.getElementById('form-sangga').value;
+            const agama = document.getElementById('form-agama').value;
+            
+            let tingkat = [];
+            if(document.getElementById('check-bantara').checked) tingkat.push('bantara');
+            if(document.getElementById('check-laksana').checked) tingkat.push('laksana');
+            
+            if(tingkat.length === 0) {
+                alert("Gagal! Minimal pilih salah satu tingkatan (Bantara / Laksana) dengan mencentangnya.");
+                return;
+            }
+
+            if (id) {
+                const idx = daftarAnggota.findIndex(a => a.id == id);
+                if(idx !== -1) {
+                    daftarAnggota[idx] = { id: parseInt(id), nama, gudep, sangga, tingkat, agama };
+                }
+            } else {
+                const idBaru = Date.now();
+                daftarAnggota.push({ id: idBaru, nama, gudep, sangga, tingkat, agama });
+                idAnggotaAktif = idBaru;
+                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
+            }
+
+            localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
+            modalAnggotaBootstrap.hide();
+            document.getElementById('input-cari-anggota').value = ""; // bersihkan pencarian saat simpan
+            isiDropdownAnggota();
+            alert("Data Berhasil Disimpan!");
+        };
+
+        function hapusAnggotaAktif() {
+            if (!IS_ADMIN) {
+                alert("Akses ditolak! Anda tidak berhak menghapus data anggota.");
+                return;
+            }
+            if (daftarAnggota.length <= 1) {
+                alert("Minimal harus ada 1 nama anggota di aplikasi.");
+                return;
+            }
+            if (confirm(`Hapus data anggota "${document.getElementById('p-nama').textContent}" secara permanen?`)) {
+                daftarAnggota = daftarAnggota.filter(a => a.id != idAnggotaAktif);
+                localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
+                idAnggotaAktif = daftarAnggota[0].id;
+                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
+                document.getElementById('input-cari-anggota').value = "";
+                isiDropdownAnggota();
+                alert("Data Anggota berhasil dihapus.");
+            }
+        }
+
+        // RENDER DATA MATRIKS SKU
+        function renderTabelSKU() {
+            const tbody = document.getElementById('sku-tbody');
+            const selectTingkat = document.getElementById('pilihan-tingkat');
+            
+            if(!selectTingkat || !selectTingkat.value) return; 
+            
+            const tingkat = selectTingkat.value;
+            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
+            if(!anggota) return;
+            
+            const agama = anggota.agama;
+
+            tbody.innerHTML = '';
+            const db = (tingkat === 'bantara') ? dataBantara : dataLaksana;
+            const limitLoop = (tingkat === 'bantara') ? 23 : 22;
+
+            document.getElementById('table-badge-tingkat').textContent = tingkat.toUpperCase();
+            document.getElementById('table-badge-tingkat').className = (tingkat === 'laksana') ? "badge bg-danger text-white fw-bold" : "badge bg-warning text-dark fw-bold";
+
+            for (let i = 1; i <= limitLoop; i++) {
+                const item = db[i];
+                let listPertanyaan = item.isAgama ? item.subAgama[agama] : item.pencapaian;
+
+                const mainRow = document.createElement('tr');
+                mainRow.className = "row-main-soal text-dark";
+                mainRow.innerHTML = `
+                    <td class="text-center bg-secondary text-white fw-bold">NO. ${i}</td>
+                    <td colspan="4" class="text-uppercase bg-light p-2 small">${item.teks} ${item.isAgama ? '(' + agama.toUpperCase() + ')' : ''}</td>
+                `;
+                tbody.appendChild(mainRow);
+
+                listPertanyaan.forEach((pertanyaan, idx) => {
+                    const keyStorage = `esku_user_${idAnggotaAktif}_${tingkat}_soal_${i}_idx_${idx}`;
+                    const saved = JSON.parse(localStorage.getItem(keyStorage)) || { status: false, tanggal: '', penguji: '' };
+
+                    const subRow = document.createElement('tr');
+                    const isChecked = saved.status ? 'checked' : '';
+                    const lblClass = saved.status ? 'text-success fw-bold' : 'text-muted';
+                    const lblText = saved.status ? 'LULUS' : 'BELUM';
+                    
+                    const isDisabledAttr = IS_ADMIN ? '' : 'disabled';
+
+                    subRow.innerHTML = `
+                        <td class="text-center text-muted small fw-bold">${i}.${idx + 1}</td>
+                        <td class="ps-4 text-secondary small">${pertanyaan}</td>
+                        <td class="text-center">
+                            <div class="form-check form-switch d-inline-block no-print">
+                                <input class="form-check-input" type="checkbox" id="status-${i}-${idx}" ${isChecked} ${isDisabledAttr} onchange="saveVervalPertanyaan(${i}, ${idx})">
+                                <label class="form-check-label small ${lblClass}" id="label-${i}-${idx}" for="status-${i}-${idx}">${lblText}</label>
+                            </div>
+                            <span class="print-text fw-bold text-sm">${saved.status ? 'LULUS' : 'BELUM'}</span>
+                        </td>
+                        <td>
+                            <input type="date" id="tanggal-${i}-${idx}" class="form-control form-control-sm text-center" value="${saved.tanggal}" ${isDisabledAttr} onchange="saveVervalPertanyaan(${i}, ${idx})">
+                            <span class="print-text text-center d-block small">${saved.tanggal}</span>
+                        </td>
+                        <td>
+                            <input type="text" id="penguji-${i}-${idx}" class="form-control form-control-sm" placeholder="Nama Pembina" value="${saved.penguji}" ${isDisabledAttr} oninput="saveVervalPertanyaan(${i}, ${idx})">
+                            <span class="print-text d-block small">${saved.penguji}</span>
+                        </td>
+                    `;
+                    tbody.appendChild(subRow);
+                });
+            }
+            hitungProgresKelelulusan();
+        }
+
+        function saveVervalPertanyaan(noSoal, indeks) {
+            if(!IS_ADMIN) {
+                alert("Akses Ilegal! Pengisian data terkunci.");
+                return;
+            }
+
+            const tingkat = document.getElementById('pilihan-tingkat').value;
+            const isChecked = document.getElementById(`status-${noSoal}-${indeks}`).checked;
+            const tgl = document.getElementById(`tanggal-${noSoal}-${indeks}`).value;
+            const penguji = document.getElementById(`penguji-${noSoal}-${indeks}`).value;
+
+            let tglFinal = tgl;
+            if (isChecked && !tgl) {
+                tglFinal = new Date().toISOString().substring(0, 10);
+                document.getElementById(`tanggal-${noSoal}-${indeks}`).value = tglFinal;
+            }
+
+            const label = document.getElementById(`label-${noSoal}-${indeks}`);
+            label.textContent = isChecked ? 'LULUS' : 'BELUM';
+            label.className = isChecked ? 'form-check-label small text-success fw-bold' : 'form-check-label small text-muted';
+
+            const payload = { status: isChecked, tanggal: tglFinal, penguji: penguji };
+            localStorage.setItem(`esku_user_${idAnggotaAktif}_${tingkat}_soal_${noSoal}_idx_${indeks}`, JSON.stringify(payload));
+
+            hitungProgresKelelulusan();
+        }
+
+        function hitungProgresKelelulusan() {
+            if(!idAnggotaAktif) return;
+            const selectTingkat = document.getElementById('pilihan-tingkat');
+            if(!selectTingkat || !selectTingkat.value) return;
+
+            const tingkat = selectTingkat.value;
+            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
+            if(!anggota) return;
+
+            const agama = anggota.agama;
+            const db = (tingkat === 'bantara') ? dataBantara : dataLaksana;
+            const limitLoop = (tingkat === 'bantara') ? 23 : 22;
+
+            let totalIndikator = 0;
+            let lulusCount = 0;
+
+            for (let i = 1; i <= limitLoop; i++) {
+                const item = db[i];
+                const panjang = item.isAgama ? item.subAgama[agama].length : item.pencapaian.length;
+
+                for (let idx = 0; idx < panjang; idx++) {
+                    totalIndikator++;
+                    const saved = JSON.parse(localStorage.getItem(`esku_user_${idAnggotaAktif}_${tingkat}_soal_${i}_idx_${idx}`));
+                    if (saved && saved.status === true) {
+                        lulusCount++;
+                    }
+                }
+            }
+
+            const persen = totalIndikator > 0 ? Math.round((lulusCount / totalIndikator) * 100) : 0;
+            const pb = document.getElementById('progress-bar');
+            if(pb) {
+                pb.style.width = `${persen}%`;
+                pb.textContent = `${persen}%`;
+            }
+            const stat = document.getElementById('stat-count');
+            if(stat) stat.textContent = `${lulusCount} / ${totalIndikator} Butir Terisi`;
+        }
+
+        window.onload = function() {
+            modalLoginBootstrap = new bootstrap.Modal(document.getElementById('modalLogin'));
+            modalAnggotaBootstrap = new bootstrap.Modal(document.getElementById('modalAnggota'));
+            muatDaftarAnggotaDariStorage();
+            perbaruiTampilanAksesAdmin();
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
