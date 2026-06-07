@@ -3,186 +3,564 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SKU Penegak: Panel Admin Mutlak</title>
+    <title>PRAMUKASMART - Sistem Uji SKU Digital</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar { background-color: #5c1d1b !important; border-bottom: 4px solid #ffc107; }
-        .card-header { background-color: #421413; color: white; font-weight: 600; }
-        .row-main-soal { background-color: #eaeaea !important; font-weight: bold; }
-        .admin-only { display: none; } /* Tersembunyi sebelum login */
-        @media print {
-            .no-print, .form-switch, .form-control, .form-select, .btn, .input-group { display: none !important; }
-            body { background-color: #fff; }
-            .print-text { display: inline-block !important; }
-            table { width: 100% !important; border: 1px solid #000 !important; }
-            th, td { border: 1px solid #000 !important; padding: 6px !important; }
+        :root {
+            --bg-sidebar: #f3eae1;
+            --bg-dashboard: #fffbf7;
+            --primary-brown: #692a0b;
+            --secondary-brown: #421803;
+            --accent-yellow: #fff3cd;
+            --text-gold: #b37400;
         }
-        .print-text { display: none; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg-dashboard);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR STYLING */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--bg-sidebar);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+            padding-left: 8px;
+        }
+
+        .brand-icon {
+            background-color: var(--primary-brown);
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo span {
+            color: var(--text-gold);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .nav-item-custom {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: #615750;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item-custom:hover {
+            background-color: rgba(105, 42, 11, 0.05);
+            color: var(--primary-brown);
+        }
+
+        .nav-item-custom.active {
+            background-color: var(--primary-brown);
+            color: white;
+            box-shadow: 0 4px 12px rgba(105, 42, 11, 0.2);
+        }
+
+        .profile-card-sidebar {
+            background-color: transparent;
+            border: 1px solid rgba(105, 42, 11, 0.15);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-box {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-brown);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* MAIN CONTENT STYLING */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px 40px;
+            min-height: 100vh;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .top-header h4 {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 16px;
+            color: var(--secondary-brown);
+            margin: 0;
+        }
+
+        .gudep-badge {
+            background-color: #fff9e6;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* HERO BANNER */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary-brown) 0%, var(--secondary-brown) 100%);
+            border-radius: 32px;
+            padding: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(66, 24, 3, 0.15);
+            margin-bottom: 32px;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            width: 220px;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            border: 30px solid rgba(255,255,255,0.02);
+        }
+
+        .hero-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        .hero-banner h1 {
+            font-weight: 800;
+            font-size: 32px;
+            max-width: 500px;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .hero-banner p {
+            color: rgba(255,255,255,0.75);
+            font-size: 14px;
+            max-width: 550px;
+            margin-bottom: 24px;
+        }
+
+        .btn-white-custom {
+            background-color: white;
+            color: var(--secondary-brown);
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* STATS CARD STYLING */
+        .stat-card {
+            background-color: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.02);
+            height: 100%;
+        }
+
+        .stat-icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #a09893;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        /* DATA MANAGEMENT AREA & TABELS */
+        .section-card {
+            background-color: white;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.02);
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary-brown);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-custom th {
+            background-color: #faf6f0 !important;
+            color: #615750 !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(105, 42, 11, 0.08) !important;
+        }
+
+        .row-main-soal {
+            background-color: #fcf9f5 !important;
+            font-weight: 700;
+            color: var(--primary-brown);
+        }
+
+        .admin-only-btn { display: none; }
+
+        /* MATERI LIST DESIGNS */
+        .materi-item {
+            border-left: 4px solid var(--primary-brown);
+            background-color: #fdfbf7;
+            padding: 16px;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 12px;
+        }
+
+        @media print {
+            .sidebar, .top-header, .hero-banner, .row-stats, .no-print, .btn, .form-switch { display: none !important; }
+            .main-content { margin-left: 0 !important; padding: 0 !important; }
+            table { width: 100% !important; border: 1px solid #000 !important; }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark shadow mb-4 no-print">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="fas fa-user-shield text-warning fs-3 me-2"></i>
-                <div>
-                    <span class="fw-bold d-block">E-SKU PRAMUKA PENEGAK</span>
-                    <small class="fs-7 text-white-50">Ambalan Arjuna-Srikandi Pangkalan SMKN 1 Trowulan</small>
+    <!-- SIDEBAR LEFT PANELS -->
+    <div class="sidebar no-print">
+        <div>
+            <div class="brand-logo">
+                <div class="brand-icon"><i class="fas fa-fire"></i></div>
+                PRAMUKA<span>SMART</span>
+            </div>
+            
+            <div class="nav-menu">
+                <div id="menu-dashboard" class="nav-item-custom active" onclick="switchSection('dashboard')">
+                    <i class="fas fa-th-large"></i> Basecamp
                 </div>
-            </a>
-            <div class="d-flex align-items-center gap-2">
-                <span id="admin-status-text" class="text-white-50 small me-2"><i class="fas fa-user-lock"></i> Mode Tamu (Read-Only)</span>
-                <button id="btn-login-logout" class="btn btn-sm btn-warning fw-bold" onclick="handleAuthAction()"><i class="fas fa-sign-in-alt"></i> Login Admin</button>
+                <div id="menu-matriks" class="nav-item-custom" onclick="switchSection('matriks')">
+                    <i class="fas fa-book"></i> Buku SKU Kendali
+                </div>
+                <div id="menu-rekap" class="nav-item-custom" onclick="switchSection('rekap')">
+                    <i class="fas fa-users"></i> Daftar Siswa (Uji)
+                </div>
+                <div id="menu-materi" class="nav-item-custom" onclick="switchSection('materi')">
+                    <i class="fas fa-graduation-cap"></i> Buku Materi Pramuka
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container mb-5">
+        <!-- Profil Pembina Terbuka Dinamis -->
+        <div class="profile-card-sidebar">
+            <div class="avatar-box" id="avatar-admin-click" onclick="toggleAdminMode()" style="cursor: pointer;" title="Klik untuk Login/Logout Pembina">PK</div>
+            <div>
+                <div class="fw-bold text-dark" style="font-size: 13px;" id="side-pembina-name">Tamu Satuan</div>
+                <div class="text-muted" style="font-size: 11px;" id="side-pembina-status">Mode Baca Saja</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT VIEW -->
+    <div class="main-content">
         
-        <div class="card border-primary shadow-sm mb-4">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-users-cog me-2"></i> Navigasi Anggota (1 Halaman 1 Nama)</span>
-                <button class="btn btn-xs btn-light fw-bold admin-only" onclick="bukaModalAnggota()"><i class="fas fa-plus-circle"></i> Tambah Anggota Baru</button>
+        <!-- TOP HEADER NAVBAR -->
+        <div class="top-header no-print">
+            <h4 id="header-section-title">DASHBOARD BASECAMP</h4>
+            <div class="gudep-badge">Ambalan Arjuna Srikandi Pangkalan SMKN 1 Trowulan</div>
+        </div>
+
+        <!-- BANNER HERO UTAMA -->
+        <div id="pane-hero-banner" class="hero-banner no-print">
+            <div class="hero-badge" id="banner-mode-badge">Admin Mode: Tamu</div>
+            <h1>Selamat Datang di Sistem Uji SKU Digital</h1>
+            <p>Pantau progres kemajuan Calon Bantara dan Laksana dalam satu dasbor terintegrasi secara cepat, valid, dan termonitor mutlak.</p>
+            <button class="btn-white-custom" onclick="switchSection('materi')">
+                <i class="fas fa-graduation-cap"></i> Buka Buku Materi SKU
+            </button>
+        </div>
+
+        <!-- BARISAN STATS CARD -->
+        <div class="row g-4 mb-4 no-print" id="pane-widgets">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon-box bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="stat-title">Total Peserta Uji</div>
+                    <div class="stat-value" id="widget-total-siswa">0 Siswa</div>
+                </div>
             </div>
-            <div class="card-body bg-light">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label class="form-label fw-bold text-primary">Pilih Data Anggota Pramuka:</label>
-                        <select id="select-anggota-aktif" class="form-select border-primary fw-bold" onchange="gantiAnggotaAktif()">
-                            </select>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon-box bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="col-md-4 no-print">
-                        <label class="form-label fw-bold text-success"><i class="fas fa-search me-1"></i> Cari Nama Anggota:</label>
-                        <div class="input-group">
-                            <input type="text" id="input-cari-anggota" class="form-control border-success" placeholder="Ketik nama siswa..." oninput="cariNamaAnggotaRealtime()">
-                            <button class="btn btn-success" type="button" onclick="resetPencarian()" title="Reset Pencarian"><i class="fas fa-undo"></i></button>
-                        </div>
+                    <div class="stat-title">Siap Dilantik</div>
+                    <div class="stat-value" id="widget-siap-lantik">0 Siswa</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="stat-icon-box bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-wave-square"></i>
                     </div>
-                    <div class="col-md-4 d-flex gap-2 justify-content-end no-print admin-only">
-                        <button class="btn btn-outline-secondary" onclick="bukaModalAnggota(true)"><i class="fas fa-edit"></i> Edit Profil Ini</button>
-                        <button class="btn btn-outline-danger" onclick="hapusAnggotaAktif()"><i class="fas fa-trash-alt"></i> Hapus Anggota Ini</button>
-                    </div>
+                    <div class="stat-title">Rata-Rata Progres</div>
+                    <div class="stat-value" id="widget-rata-progres">0%</div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-header"><i class="fas fa-id-card me-2 text-warning"></i> Atribut Profil Anggota</div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Nama Lengkap</label>
-                        <div id="p-nama" class="form-control-plaintext border-bottom fw-bold text-dark">-</div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold">Nomor Gudep</label>
-                        <div id="p-gudep" class="form-control-plaintext border-bottom">-</div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold">Nama Sangga</label>
-                        <div id="p-sangga" class="form-control-plaintext border-bottom">-</div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-bold text-danger">Tingkat SKU Aktif</label>
-                        <select id="pilihan-tingkat" class="form-select border-danger fw-bold text-danger" onchange="renderTabelSKU()">
-                            </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Agama (Materi No. 1)</label>
-                        <select id="pilihan-agama" class="form-select border-primary" onchange="renderTabelSKU()" disabled>
-                            <option value="islam">Islam</option>
-                            <option value="katolik">Katolik</option>
-                            <option value="protestan">Kristen Protestan</option>
-                            <option value="hindu">Hindu</option>
-                            <option value="budha">Budha</option>
-                        </select>
-                    </div>
+        <!-- PANEL NAVIGASI SELECTOR SISWA -->
+        <div class="section-card no-print" id="pane-selector-nav">
+            <div class="section-title"><i class="fas fa-sliders-h text-warning"></i> Kontrol Data & Navigasi Ambalan</div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted">Siswa yang Sedang Dipantau:</label>
+                    <select id="select-anggota-aktif" class="form-select border-warning fw-bold" onchange="gantiAnggotaAktif()"></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">Cari Cepat Nama:</label>
+                    <input type="text" id="input-cari-anggota" class="form-control" placeholder="Ketik nama siswa..." oninput="cariNamaAnggotaRealtime()">
+                </div>
+                <div class="col-md-3 text-end">
+                    <button class="btn btn-sm btn-dark w-100 py-2 admin-only-btn" id="btn-tambah-anak" onclick="bukaModalAnggota()"><i class="fas fa-plus-circle me-1"></i> Register Siswa</button>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm mb-4 no-print">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div class="w-100 me-3">
-                    <h5 class="card-title fw-bold text-muted mb-1">Progres Capaian Verval Individu</h5>
-                    <div class="progress" style="height: 25px;">
-                        <div id="progress-bar" class="progress-bar bg-success progress-bar-striped progress-bar-animated fw-bold" style="width: 0%;">0%</div>
-                    </div>
+        <!-- ATRIBUT PROFIL YANG SEDANG AKTIF -->
+        <div class="section-card" id="section-profil-box">
+            <div class="section-title"><i class="fas fa-id-card text-primary"></i> Identitas Lembar Kendali Aktif</div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6">
+                    <small class="text-muted d-block">Nama Lengkap</small>
+                    <span id="p-nama" class="fw-bold text-dark fs-5">-</span>
                 </div>
-                <div class="text-end flex-shrink-0">
-                    <span class="badge bg-dark fs-6 p-2" id="stat-count">0 / 0 Butir</span>
+                <div class="col-md-2 col-6">
+                    <small class="text-muted d-block">Nomor Gudep</small>
+                    <span id="p-gudep" class="fw-bold">-</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <small class="text-muted d-block">Nama Sangga</small>
+                    <span id="p-sangga" class="fw-bold text-success">-</span>
+                </div>
+                <div class="col-md-2 col-6">
+                    <small class="text-muted d-block">Tingkat SKU</small>
+                    <select id="pilihan-tingkat" class="form-select form-select-sm border-danger fw-bold text-danger" onchange="renderTabelSKU()"></select>
+                </div>
+                <div class="col-md-3 col-12">
+                    <small class="text-muted d-block">Agama</small>
+                    <select id="pilihan-agama" class="form-select form-select-sm border-primary" onchange="sinkronisasiAgamaKeProfil()">
+                        <option value="islam">Islam</option>
+                        <option value="katolik">Katolik</option>
+                        <option value="protestan">Kristen Protestan</option>
+                        <option value="hindu">Hindu</option>
+                        <option value="budha">Budha</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Progres Bar Individu -->
+            <div class="mt-4 no-print">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="small fw-bold text-muted">Capaian Validasi Mandiri</span>
+                    <span class="badge bg-secondary" id="stat-count">0 / 0 Indikator</span>
+                </div>
+                <div class="progress" style="height: 12px; border-radius: 10px;">
+                    <div id="progress-bar" class="progress-bar bg-success" style="width: 0%;">0%</div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-clipboard-check text-warning me-2"></i> Matriks Lembar Kendali SKU Terpilih</span>
-                <span class="badge bg-warning text-dark fw-bold" id="table-badge-tingkat">BANTARA</span>
+        <!-- TABEL MATRIKS UTAMA SKU -->
+        <div class="section-card" id="section-tabel-sku">
+            <div class="section-title d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-clipboard-list text-danger"></i> Buku Catatan Syarat Kecakapan Umum</span>
+                <button class="btn btn-sm btn-outline-warning text-dark border-secondary no-print" onclick="window.print()"><i class="fas fa-print"></i> Cetak Lembar Ini</button>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-hover table-bordered align-middle mb-0">
-                    <thead class="table-dark">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-custom align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th style="width: 8%;" class="text-center">No. SKU</th>
-                            <th style="width: 47%;">Butir Pertanyaan / Indikator Pencapaian</th>
-                            <th style="width: 12%;" class="text-center">Status Verval</th>
-                            <th style="width: 15%;" class="text-center">Tanggal Uji</th>
-                            <th style="width: 18%;" class="text-center">Tanda Tangan / Penguji</th>
+                            <th style="width: 10%;" class="text-center">No. SKU</th>
+                            <th style="width: 45%;">Indikator Pencapaian / Butir Uji</th>
+                            <th style="width: 15%;" class="text-center">Verval Status</th>
+                            <th style="width: 15%;" class="text-center">Tgl Uji</th>
+                            <th style="width: 15%;">Nama Penguji</th>
                         </tr>
                     </thead>
-                    <tbody id="sku-tbody">
-                        </tbody>
+                    <tbody id="sku-tbody"></tbody>
                 </table>
             </div>
         </div>
 
-        <div class="mt-4 d-flex justify-content-end gap-2 no-print">
-            <button class="btn btn-warning text-dark fw-bold" onclick="window.print()"><i class="fas fa-print me-1"></i> Cetak Lembar Kendali Anggota Ini</button>
+        <!-- REKAPITULASI PROGRES SELURUH ANGGOTA AMBALAN -->
+        <div class="section-card" id="section-rekap-ambalan">
+            <div class="section-title"><i class="fas fa-table text-success"></i> Rekapitulasi Progres & Validasi Pengisian SKU Ambalan</div>
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th>Nama Lengkap</th>
+                            <th>Sangga</th>
+                            <th class="text-center">Tingkat SKU</th>
+                            <th class="text-center">Validasi Capaian</th>
+                            <th style="width: 25%;">Grafik Progres</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekap-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SECTION BUKU MATERI PRAMUKA PENEGAK -->
+        <div class="section-card" id="section-buku-materi" style="display: none;">
+            <div class="section-title"><i class="fas fa-graduation-cap text-primary"></i> Ensiklopedia Materi SKU Penegak (Panduan Resmi)</div>
+            <p class="text-muted small mb-4">Pilih tingkatan di bawah untuk menampilkan rangkuman materi pokok penyelesaian indikator SKU:</p>
+            
+            <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="renderMateriEksklusif('bantara')">Materi Penegak Bantara</button>
+                <button class="btn btn-sm btn-danger fw-bold text-white" onclick="renderMateriEksklusif('laksana')">Materi Penegak Laksana</button>
+            </div>
+
+            <div id="materi-render-box"></div>
         </div>
 
     </div>
 
+    <!-- MODAL FORM REGISTRASI SISWA -->
     <div class="modal fade" id="modalAnggota" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content" style="border-radius:20px;">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="modal-anggota-title">Tambah Anggota</h5>
+                    <h5 class="modal-title">Registrasi Peserta Uji Baru</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="form-anggota">
-                        <input type="hidden" id="form-id-anggota">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nama Lengkap Siswa</label>
-                            <input type="text" id="form-nama" class="form-control" required placeholder="Contoh: Ahmad Dhani">
+                            <input type="text" id="form-nama" class="form-control" required placeholder="Contoh: Ahmad Dani">
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Nomor Gudep</label>
-                            <input type="text" id="form-gudep" class="form-control" required placeholder="Contoh: 04.112">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Nama Sangga</label>
-                            <input type="text" id="form-sangga" class="form-control" required placeholder="Contoh: Pencoba">
+                            <input type="text" id="form-gudep" class="form-control" required value="04.081">
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold d-block">Tingkat Penegak (Bisa Centang Keduanya)</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="check-bantara" value="bantara">
-                                <label class="form-check-label fw-bold text-warning" for="check-bantara">Bantara</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" id="check-laksana" value="laksana">
-                                <label class="form-check-label fw-bold text-danger" for="check-laksana">Laksana</label>
-                            </div>
+                            <label class="form-label fw-bold">Nama Sangga</label>
+                            <select id="form-sangga" class="form-select" required>
+                                <option value="" disabled selected>-- Pilih Salah Satu Sangga --</option>
+                                <option value="Perintis">Sangga Perintis</option>
+                                <option value="Pencoba">Sangga Pencoba</option>
+                                <option value="Pendobrak">Sangga Pendobrak</option>
+                                <option value="Penegas">Sangga Penegas</option>
+                                <option value="Pelaksana">Sangga Pelaksana</option>
+                            </select>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Agama</label>
+                            <label class="form-label fw-bold d-block">Tingkat Penegak</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="check-bantara" value="bantara" checked>
+                                <label class="form-check-label" for="check-bantara">Bantara</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="check-laksana" value="laksana" checked>
+                                <label class="form-check-label" for="check-laksana">Laksana</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Opsi Agama</label>
                             <select id="form-agama" class="form-select">
                                 <option value="islam">Islam</option>
                                 <option value="katolik">Katolik</option>
@@ -191,284 +569,503 @@
                                 <option value="budha">Budha</option>
                             </select>
                         </div>
-                        <div class="text-end">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan Data</button>
-                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold">Daftarkan Anggota</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title"><i class="fas fa-lock"></i> Login Admin</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Username</label>
-                        <input type="text" id="login-username" class="form-control" value="admin">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Password</label>
-                        <input type="password" id="login-password" class="form-control">
-                    </div>
-                    <button class="btn btn-danger w-100 fw-bold" onclick="submitLogin()">Masuk Sistem</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- JS ENGINE IMPLEMENTATION -->
     <script>
-        // DATA STATE SISTEM
         let IS_ADMIN = false;
         let daftarAnggota = [];
         let idAnggotaAktif = null;
-
-        let modalLoginBootstrap;
         let modalAnggotaBootstrap;
 
-        // DB SOAL BANTARA
+        // DATABASE PENEGAK BANTARA (Sesuai Data Kakak Sebelumnya)
         const dataBantara = {
-            1: { teks: "Agama", isAgama: true, subAgama: { islam: ["Dapat menjelaskan makna Rukun Iman dan Rukun Islam", "Mampu menjelaskan makna Sholat berjamaah dan dapat mendirikan Sholat sunah secara individu", "Mampu menjelaskan makna berpuasa serta macam-macam Puasa", "Tahu tata cara merawat atau mengurus jenazah (Tajhizul Jenazah)", "Dapat membaca doa Ijab Qobul Zakat", "Dapat menghafal minimal sebuah hadist dan menjelaskan hadist tersebut"], katolik: ["Tahu dan paham makna dan arti Gereja Katolik", "Dapat memimpin doa dan membangun serta membuat gerakan cinta kasih pada keberagaman agama di luar Gereja Katolik"], protestan: ["Mendalami Hukum Kasih dan mengamalkannya dalam kehidupan sehari-hari"], hindu: ["Dapat menjelaskan sejarah perkembangan agama Hindu di Indonesia", "Dapat menjelaskan makna dan hakikat dari tujuan melaksanakan persembahyangan sehari-hari dan hari besar keagamaan Hindu", "Dapat menjelaskan maksud dan tujuan kelahiran menjadi manusia menurut agama Hindu", "Dapat menjelaskan makna dan hakekat ajaran Tri Hita Karana dengan pelestarian alam lingkungan", "Dapat mempraktikkan bentuk gerakan Asanas dari Hatta Yoga", "Dapat melafalkan dan mengkidungkan salah satu bentuk Dharma Gita", "Dapat mendeskripsikan struktur, fungsi dan sejarah pura dalam cakupan Sad Kahyangan"], budha: ["Saddha - Mengungkapkan Buddha Dharma sebagai salah satu agama", "Merumuskan dasar-dasar keyakinan dan cara mengembangkannya", "Menjelaskan sejarah Buddha Gotama", "Menjelaskan Tiratana sebagai pelindung", "Menjelaskan kisah-kisah sejarah penulisan kitab suci tripitaka"] } },
-            2: { teks: "Berani menyampaikan kritik dan saran dengan sopan dan santun kepada sesama teman", pencapaian: ["Dapat menyampaikan kritik dan saran dengan sopan dan santun kepada sesama teman"] },
+            1: { 
+                teks: "Agama", 
+                isAgama: true, 
+                subAgama: { 
+                    islam: [
+                        "Dapat menjelaskan makna Rukun Iman dan Rukun Islam", 
+                        "Mampu menjelaskan makna Sholat berjamaah dan dapat mendirikan Sholat sunah secara individu", 
+                        "Mampu menjelaskan makna berpuasa serta macam-macam Puasa", 
+                        "Tahu tata cara merawat atau mengurus jenazah (Tajhizul Jenazah)", 
+                        "Dapat membaca doa Ijab Qobul Zakat", 
+                        "Dapat menghafal minimal sebuah hadist dan menjelaskan hadist tersebut"
+                    ], 
+                    katolik: [
+                        "Tahu dan paham makna dan arti Gereja Katolik", 
+                        "Dapat memimpin doa dan membangun serta membuat gerakan cinta kasih pada keberagaman agama di luar Gereja Katolik"
+                    ], 
+                    protestan: [
+                        "Mendalami Hukum Kasih dan mengamalkannya dalam kehidupan sehari-hari"
+                    ],
+                    hindu: [
+                        "Dapat menjelaskan sejarah perkembangan agama Hindu di Indonesia",
+                        "Dapat menjelaskan makna dan hakikat dari tujuan melaksanakan persembahyangan sehari-hari dan hari besar keagamaan Hindu",
+                        "Dapat menjelaskan maksud dan tujuan kelahiran menjadi manusia menurut agama Hindu",
+                        "Dapat menjelaskan makna dan hakekat ajaran Tri Hita Karana dengan pelestarian alam lingkungan",
+                        "Dapat mempraktikkan bentuk gerakan Asanas dari Hatta Yoga",
+                        "Dapat melafalkan dan mengkidungkan salah satu bentuk Dharma Gita",
+                        "Dapat mendeskripsikan struktur, fungsi dan sejarah pura dalam cakupan Sad Kahyangan"
+                    ],
+                    budha: [
+                        "Saddha - Mengungkapkan Buddha Dharma sebagai salah satu agama",
+                        "Merumuskan dasar-dasar keyakinan dan cara mengembangkannya",
+                        "Menjelaskan sejarah Buddha Gotama",
+                        "Menjelaskan Tiratana sebagai pelindung",
+                        "Menjelaskan kisah-kisah sejarah penulisan kitab suci tripitaka"
+                    ]
+                } 
+            },
+            2: { teks: "Berani menyampaikan kritik dan saran dengan sopan dan santun kepada sesama teman", pencapaian: ["Menyampaikan kritik dan saran secara santun"] },
             3: { teks: "Dapat mengikuti jalannya diskusi dengan baik", pencapaian: ["Memahami Tata tertib berdiskusi", "Turut aktif dalam suatu proses diskusi"] },
-            4: { teks: "Teknik Kepramukaan: Dapat saling menghormati dan toleransi dalam bakti antar umat beragama", pencapaian: ["Mampu saling menghormati dan toleransi dalam bakti antar umat beragama"] },
-            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 2 kali setiap month/bulan", pencapaian: ["Mengikuti pertemuan Ambalan sekurang-kurangnya 2 kali setiap bulan"] },
-            6: { teks: "Setia membayar iuran kepada gugus depan, dengan uang yang diperoleh dari usaha sendiri.", pencapaian: ["Membayar iuran kepada gugus depan dengan uang dari usaha sendiri"] },
-            7: { teks: "Dapat berbahasa Indonesia dengan baik dan benar dalam pergaulan sehari-hari.", pencapaian: ["Menggunakan bahasa Indonesia dengan baik dan benar dalam pergaulan sehari-hari"] },
-            8: { teks: "Telah membantu mengelola kegiatan di Ambalan.", pencapaian: ["Aktif membantu mengelola kegiatan di Ambalan"] },
-            9: { teks: "Telah ikut aktif kerja bakti di masyarakat minimal 2 kali.", pencapaian: ["Ikut aktif kerja bakti di masyarakat minimal 2 kali"] },
-            10: { teks: "Dapat menampilkan kesenian daerah di depan umum minimal satu kali.", pencapaian: ["Menampilkan kesenian daerah di depan umum minimal satu kali"] },
-            11: { teks: "Mengenal, mengerti dan memahami isi AD & ART Gerakan Pramuka.", pencapaian: ["Memahami isi materi AD & ART Gerakan Pramuka"] },
-            12: { teks: "Dapat menjelaskan sejarah Kepramukaan Indonesia dan Dunia.", pencapaian: ["Menjelaskan sejarah Kepramukaan Indonesia dan Dunia"] },
-            13: { teks: "Dapat menggunakan jam, kompas, tanda jejak dan tanda-tanda alam lainnya dalam pengembaraan.", pencapaian: ["Mampu menggunakan jam, kompas, tanda jejak dan tanda alam saat pengembaraan"] },
-            14: { teks: "Dapat menjelaskan bentuk pengamalan Pancasila dalam kehidupan sehari-hari.", pencapaian: ["Menjelaskan bentuk pengamalan Pancasila dalam kehidupan sehari-hari"] },
-            15: { teks: "Dapat menjelaskan tentang organisasi ASEAN dan PBB.", pencapaian: ["Menjelaskan tentang organisasi ASEAN dan PBB"] },
-            16: { teks: "Dapat menjelaskan tentang kewirausahaan.", pencapaian: ["Dapat menjelaskan tentang materi kewirausahaan"] },
-            17: { teks: "Dapat mendaur ulang barang bekas menjadi barang yang bermanfaat.", pencapaian: ["Mendaur ulang barang bekas menjadi barang yang bermanfaat"] },
-            18: { teks: "Dapat menerapkan pengetahuannya tentang tali temali dan pionering dalam kehidupan sehari-hari.", pencapaian: ["Menerapkan ilmu tali temali dan pionering di kehidupan sehari-hari"] },
-            19: { teks: "Selalu berolahraga, mampu melakukan olahraga renang gaya bebas dan menguasai 1 (satu) cabang olahraga tim.", pencapaian: ["Aktif berolahraga & menguasai renang gaya bebas / cabang olahraga tim"] },
-            20: { teks: "Dapat menjelaskan perkembangan fisik laki-laki dan perempuan.", pencapaian: ["Menjelaskan perkembangan fisik laki-laki dan perempuan"] },
-            21: { teks: "Dapat memimpin baris berbaris dan menjelaskan peraturannya kepada anggota sangganya", pencapaian: ["Memimpin baris berbaris dan menjelaskan peraturannya kepada anggota sangga"] },
-            22: { teks: "Dapat menyebutkan beberapa penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat.", pencapaian: ["Menyebutkan penyakit infeksi, degeneratif, dan perilaku tidak sehat"] },
-            23: { teks: "Ikut serta dalam perkemahan selama 3 hari berturut – turut.", pencapaian: ["Ikut serta dalam perkemahan selama 3 hari berturut–turut"] }
+            4: { teks: "Dapat saling menghormati dan toleransi dalam bakti antar umat beragama", pencapaian: ["Menerapkan sikap toleransi antar umat beragama"] },
+            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 2 kali setiap bulan", pencapaian: ["Kehadiran sidang/pertemuan ambalan rutin bulanan"] },
+            6: { teks: "Setia membayar iuran kepada gugus depan, dengan uang yang diperoleh dari usaha sendiri", pencapaian: ["Membayar iuran berkala hasil usaha mandiri"] },
+            7: { teks: "Dapat berbahasa Indonesia dengan baik dan benar dalam pergaulan sehari-hari", pencapaian: ["Berkomunikasi formal dan informal secara baik"] },
+            8: { teks: "Telah membantu mengelola kegiatan di Ambalan", pencapaian: ["Berperan aktif menjadi panitia/pelaksana kegiatan"] },
+            9: { teks: "Telah ikut aktif kerja bakti di masyarakat minimal 2 kali", pencapaian: ["Kerja bakti lingkungan masyarakat ke-1", "Kerja bakti lingkungan masyarakat ke-2"] },
+            10: { teks: "Dapat menampilkan kesenian daerah di depan umum minimal satu kali", pencapaian: ["Pentas seni daerah/budaya nusantara"] },
+            11: { teks: "Mengenal, mengerti dan memahami isi AD & ART Gerakan Pramuka", pencapaian: ["Memahami pasal penting AD & ART Gerakan Pramuka"] },
+            12: { teks: "Dapat menjelaskan sejarah Kepramukaan Indonesia dan Dunia", pencapaian: ["Sejarah Kepramukaan Dunia (Baden Powell)", "Sejarah Gerakan Pramuka Indonesia"] },
+            13: { teks: "Dapat menggunakan jam, kompas, tanda jejak dan tanda-tanda alam lainnya dalam pengembaraan", pencapaian: ["Navigasi Kompas/Jam", "Membaca Tanda Jejak & Sandi Alam"] },
+            14: { teks: "Dapat menjelaskan bentuk pengamalan Pancasila dalam kehidupan sehari-hari", pencapaian: ["Pengamalan Sila 1 sampai Sila 5"] },
+            15: { teks: "Dapat menjelaskan tentang organisasi ASEAN dan PBB", pencapaian: ["Struktur & Sejarah ASEAN", "Peran & Badan Organisasi PBB"] },
+            16: { teks: "Dapat menjelaskan tentang kewirausahaan", pencapaian: ["Konsep dasar & mentalitas enterpreneurship/wirausaha"] },
+            17: { teks: "Dapat mendaur ulang barang bekas menjadi barang yang bermanfaat", pencapaian: ["Membuat produk bernilai guna tinggi dari limbah/barang bekas"] },
+            18: { teks: "Dapat menerapkan pengetahuannya tentang tali temali dan pionering dalam kehidupan sehari-hari", pencapaian: ["Menguasai simpul & ikatan dasar", "Membuat bangunan pionering fungsional"] },
+            19: { teks: "Selalu berolahraga, mampu melakukan olahraga renang gaya bebas dan menguasai 1 cabang olahraga tim", pencapaian: ["Renang gaya bebas", "Penguasaan 1 cabang olahraga tim (Futsal/Voli/Basket, dll)"] },
+            20: { teks: "Dapat menjelaskan perkembangan fisik laki-laki dan perempuan", pencapaian: ["Memahami tanda perubahan fisik primer & sekunder manusia"] },
+            21: { teks: "Dapat memimpin baris berbaris dan menjelaskan peraturannya kepada anggota sangganya", pencapaian: ["Memberikan aba-aba & aba-aba berkumpul", "Menjelaskan aturan dasar PBB Perpang"] },
+            22: { teks: "Dapat menyebutkan beberapa penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat", pencapaian: ["Menjelaskan contoh penyakit infeksi", "Menjelaskan contoh penyakit degeneratif & pola hidup buruk"] },
+            23: { teks: "Ikut serta dalam perkemahan selama 3 hari berturut – turut", pencapaian: ["Validasi keikutsertaan perkemahan 3 hari (Jumat-Minggu/Persami)"] }
         };
 
-        // DB SOAL LAKSANA
+        // INTEGRASI BARU: DATABASE PENEGAK LAKSANA SESUAI PERMINTAAN KAKAK
         const dataLaksana = {
-            1: { teks: "Agama", isAgama: true, subAgama: { islam: ["Dapat menjelaskan makna Rukun Iman dan Rukun Islam di muka Pasukan Penggalang atau Ambalan Penegak", "Dapat menjelaskan rukun sholat dan dapat mendirikan sholat sunah", "Dapat menjelaskan rukun puasa serta dapat melakukan salah satu puasa sunah", "Memahami tata cara merawat/mengurus jenazah", "Pernah menjadi amil zakat", "Dapat menghafal ayat tematik dari Al-Quran dan mampu menjelaskannya"], katolik: ["Memahami dan mendalami 7 sakramen", "Menghayati dan dapat menceritakan riwayat salah satu Santo / Santa", "Membahas 10 Perintah Allah, dilengkapi dengan contoh kehidupan sehari-hari"], protestan: ["Dapat memberi kesaksian di depan jemaat atau teman sebaya", "Dapat berpartisipasi aktif dalam pelayanan Gereja sesuai bakat dan kemampuannya", "Telah mengikuti pengajaran Agama (Katekisasi)"], hindu: ["Dapat menjelaskan sejarah kerajaan / candi-candi agama Hindu di Indonesia", "Dapat melafalkan dan bertindak sebagai pemimpin persembahyangan Panca Sembah", "Dapat menjelaskan Samsara / Punarbawa atau reinkarnasi sebagai bentuk untuk penyempurnaan kelahiran berikutnya", "Dapat menjelaskan konsep Ajaran Asta Brata", "Dapat melakukan gerakan dan menjelaskan fungsi, serta manfaat dari setiap gerakan Yoga Asanas", "Dapat melafalkan dan mengidungkan lebih dari satu bentuk Dharma Gita", "Dapat menjelaskan esensi ajaran Hindu dalam kehidupan"], budha: ["Dapat memimpin dan mengorganisir kebaktian (pagi dan sore) serta perayaan hari-hari besar Agama Buddha (Waisak, Asadha, Kathina, Maggapuja)", "Saddha: Mendiskripsikan ruang lingkup dan intisari Tripitaka", "Menjelaskan makna dan manfaat puja serta doa", "Mendiskripsikan sila sebagai bagian dari jalan mulia berunsur delapan", "Menjelaskan kebenaran yang terdapat dalam Tripitaka"] } },
-            2: { teks: "Dapat menerima kritik dari orang lain, serta berani mengeluarkan pendapatnya dengan tertib, sopan dan santun kepada orang-orang di sekitarnya", pencapaian: ["Menerima kritik & berani berpendapat dengan tertib, sopan, santun"] },
-            3: { teks: "Dapat mengikuti dan atau memimpin diskusi Ambalan dan mampu mengambil keputusan", pencapaian: ["Mengikuti / memimpin diskusi Ambalan dan mengambil keputusan"] },
-            4: { teks: "Dapat menjadi penengah (memberi solusi), jika terjadi ketidaksepahaman dalam kelompoknya", pencapaian: ["Menjadi penengah dan memberi solusi pemecahan masalah kelompok"] },
-            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 3 kali setiap bulan", pencapaian: ["Mengikuti pertemuan Ambalan sekurang-kurangnya 3 kali setiap bulan"] },
-            6: { teks: "Setia membayar iuran kepada gugus depannya, dengan uang diperoleh dari usaha sendiri, serta membantu Ambalan dalam mengelola administrasi keuangan", pencapaian: ["Membayar iuran dari usaha sendiri dan mengelola administrasi keuangan"] },
-            7: { teks: "Dapat memimpin rapat dan membuat risalah dengan baik", pencapaian: ["Memimpin rapat Ambalan dan menyusun berkas risalah rapat"] },
-            8: { teks: "Pernah memimpin kegiatan di tingkat Ambalan", pencapaian: ["Pernah menjadi Ketua Panitia / Sangga Kerja kegiatan Ambalan"] },
-            9: { teks: "Pernah memimpin kerja bakti di masyarakat minimal 2 kali", pencapaian: ["Memimpin pelaksanaan kerja bakti di masyarakat minimal 2 kali"] },
-            10: { teks: "Dapat memimpin kelompok dalam menampilkan salah satu jenis kesenian daerah", pencapaian: ["Memimpin kelompok menampilkan salah satu jenis kesenian daerah"] },
-            11: { teks: "Dapat menjelaskan isi AD & ART Gerakan Pramuka kepada Ambalan", pencapaian: ["Menjelaskan poin penting isi AD & ART Gerakan Pramuka kepada Ambalan"] },
-            12: { teks: "Dapat menjelaskan di muka umum tentang sejarah kepramukaan Indonesia dan dunia", pencapaian: ["Menjelaskan di muka umum tentang sejarah pramuka Indonesia & dunia"] },
-            13: { teks: "Dapat melakukan pengembaraan selama 3 hari dan atau mengatur kehidupan perkemahan selama minimal 3 hari", pencapaian: ["Melakukan pengembaraan / mengatur manajemen perkemahan minimal 3 hari"] },
-            14: { teks: "Dapat menjelaskan sejarah, arti, tatacara penggunaan dan kiasan Sang Merah Putih", pencapaian: ["Menjelaskan sejarah, arti, tata cara, dan kiasan Sang Merah Putih"] },
-            15: { teks: "Dapat menjelaskan peran Indonesia dalam organisasi ASEAN dan PBB", pencapaian: ["Menjelaskan peran penting Indonesia dalam organisasi ASEAN dan PBB"] },
-            16: { teks: "Telah memiliki keterampilan kewirausahaan yang dapat menghasilkan uang", pencapaian: ["Memiliki bukti produk/jasa kewirausahaan yang menghasilkan uang"] },
-            17: { teks: "Dapat membuat salah satu jenis peralatan teknologi tepat guna", pencapaian: ["Membuat salah satu jenis peralatan teknologi tepat guna (TTG)"] },
-            18: { teks: "Secara berkelompok dapat membuat struktur dari keterampilan tali temali dan pionering, yang dapat digunakan masyarakat", pencapaian: ["Membuat bangunan pionering kelompok yang bermanfaat bagi masyarakat"] },
-            19: { teks: "Selalu berolahraga, Dapat melakukan olahraga renang selain gaya bebas dan menguasai 1 (satu) cabang olahraga lainnya", pencapaian: ["Bisa renang gaya selain gaya bebas & menguasai 1 cabang olahraga lain"] },
-            20: { teks: "Dapat memahami dan menjelaskan tentang kesehatan reproduksi", pencapaian: ["Memahami dan menjelaskan konsep kesehatan reproduksi remaja"] },
-            21: { teks: "Dapat mempersiapkan dan melaksanakan upacara umum minimal 3 kali", pencapaian: ["Mempersiapkan dan bertindak sebagai petugas upacara umum minimal 3 kali"] },
-            22: { teks: "Dapat menyebutkan penyebab dan cara pencegahan penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat", pencapaian: ["Menjelaskan penyebab & pencegahan penyakit infeksi, degeneratif, & tidak sehat"] }
+            1: {
+                teks: "Agama",
+                isAgama: true,
+                subAgama: {
+                    islam: [
+                        "Dapat menjelaskan makna Rukun Iman dan Rukun Islam di muka Pasukan Penggalang atau Ambalan Penegak",
+                        "Dapat menjelaskan rukun sholat dan dapat mendirikan sholat sunah",
+                        "Dapat menjelaskan rukun puasa serta dapat melakukan salah satu puasa sunah",
+                        "Memahami tata cara merawat/mengurus jenazah",
+                        "Pernah menjadi amil zakat",
+                        "Dapat menghafal ayat tematik, dari Al quran dan mampu menjelaskannya"
+                    ],
+                    katolik: [
+                        "Memahami dan mendalami 7 sakramen",
+                        "Menghayati dan dapat menceritakan riwayat salah satu Santo / Santa",
+                        "Membahas 10 Perintah Allah, dilengkapi dengan contoh kehidupan sehari-hari"
+                    ],
+                    protestan: [
+                        "Dapat memberi kesaksian di depan jemaat atau teman sebaya",
+                        "Dapat berpartisipasi aktif dalam pelayanan Gereja sesuai bakat dan kemampuannya",
+                        "Telah mengikuti pengajaran Agama (Katekisasi)"
+                    ],
+                    hindu: [
+                        "Dapat menjelaskan sejarah kerajaan /candi–candi agama Hindu di Indonesia",
+                        "Dapat melafalkan dan bertindak sebagai pemimpin persembahyangan Panca Sembah",
+                        "Dapat menjelaskan Samsara / Punarbawa atau reinkarnasi sebagai bentuk untuk penyempurnaan kelahiran berikutnya",
+                        "Dapat menjelaskan konsep Ajaran Asta Brata",
+                        "Dapat melakukan gerakan dan menjelaskan fungsi, serta manfaat dari setiap gerakan Yoga Asanas",
+                        "Dapat melafalkan dan mengidungkan lebih dari satu bentuk Dharma Gita",
+                        "Dapat menjelaskan struktur dan fungsi tempat suci Hindu"
+                    ],
+                    budha: [
+                        "Dapat memimpin dan mengorganisir kebaktian (pagi dan sore) serta perayaan hari-hari besar Agama Buddha (Waisak, Asadha, Kathina, Maggapuja)",
+                        "Saddha: Mendiskripsikan ruang lingkup dan intisari Tripitaka",
+                        "Menjelaskan makna dan manfaat puja serta doa",
+                        "Mendiskripsikan sila sebagai bagian dari jalan mulia berunsur delapan",
+                        "Menjelaskan kebenaran yang terdapat dalam Tripitaka"
+                    ]
+                }
+            },
+            2: { teks: "Dapat menerima kritik dari orang lain, serta berani mengeluarkan pendapatnya dengan tertib, sopan dan santun kepada orang-orang di sekitarnya", pencapaian: ["Menerima kritik dengan lapang dada", "Berani berpendapat dengan sopan & santun"] },
+            3: { teks: "Dapat mengikuti dan atau memimpin diskusi Ambalan dan mampu mengambil keputusan", pencapaian: ["Mengikuti/memimpin diskusi Ambalan", "Mampu mengambil keputusan yang bijak"] },
+            4: { teks: "Dapat menjadi penengah (memberi solusi), jika terjadi ketidaksepahaman dalam kelompoknya", pencapaian: ["Menjadi penengah & memberi solusi konflik kelompok"] },
+            5: { teks: "Mengikuti pertemuan Ambalan sekurang-kurangnya 3 kali setiap bulan", pencapaian: ["Kehadiran pertemuan ambalan rutin bulanan (Minimal 3x)"] },
+            6: { teks: "Setia membayar iuran kepada gugus depannya, dengan uang diperoleh dari usaha sendiri, serta membantu Ambalan dalam mengelola administrasi keuangan", pencapaian: ["Membayar iuran hasil usaha sendiri", "Membantu mengelola administrasi keuangan Ambalan"] },
+            7: { teks: "Dapat memimpin rapat dan membuat risalah dengan baik", pencapaian: ["Memimpin rapat koordinasi resmi", "Membuat risalah/notulen rapat dengan baik"] },
+            8: { teks: "Pernah memimpin kegiatan di tingkat Ambalan", pencapaian: ["Menjadi Ketua Panitia/Pimpinan Kegiatan Ambalan"] },
+            9: { teks: "Pernah memimpin kerja bakti di masyarakat minimal 2 kali", pencapaian: ["Memimpin kerja bakti masyarakat ke-1", "Memimpin kerja bakti masyarakat ke-2"] },
+            10: { teks: "Dapat memimpin kelompok dalam menampilkan salah satu jenis kesenian daerah", pencapaian: ["Memimpin pertunjukan/pementasan seni daerah"] },
+            11: { teks: "Dapat menjelaskan isi AD & ART Gerakan Pramuka kepada Ambalan", pencapaian: ["Sosialisasi/menjelaskan poin AD & ART di depan Ambalan"] },
+            12: { teks: "Dapat menjelaskan di muka umum tentang sejarah kepramukaan indonesia dan dunia", pencapaian: ["Pidato/presentasi sejarah pramuka dunia & nasional"] },
+            13: { teks: "Dapat melakukan pengembaraan selama 3 hari dan atau mengatur kehidupan perkemahan selama minimal 3 hari", pencapaian: ["Melakukan pengembaraan 3 hari", "Mengatur manajemen tata laksana kemah minimal 3 hari"] },
+            14: { teks: "Dapat menjelaskan sejarah, arti, tatacara penggunaan dan kiasan Sang Merah Putih", pencapaian: ["Menjelaskan sejarah & kiasan warna bendera", "Memahami tata cara penggunaan & penghormatan bendera"] },
+            15: { teks: "Dapat menjelaskan peran Indonesia dalam organisasi ASEAN dan PBB", pencapaian: ["Menjelaskan peran Indonesia di ASEAN", "Menjelaskan peran aktif Indonesia di PBB"] },
+            16: { teks: "Telah memiliki keterampilan kewirausahaan yang dapat menghasilkan uang", pencapaian: ["Menjalankan unit usaha mandiri/menghasilkan omzet finansial"] },
+            17: { teks: "Dapat membuat salah satu jenis peralatan teknologi tepat guna", pencapaian: ["Membuat alat Teknologi Tepat Guna (TTG) sederhana"] },
+            18: { teks: "Secara berkelompok dapat membuat struktur dari keterampilan tali temali dan pionering, yang dapat digunakan masyarakat", pencapaian: ["Membuat proyek pionering kelompok berskala sosial/masyarakat"] },
+            19: { teks: "Selalu berolahraga, Dapat melakukan olahraga renang selain gaya bebas dan menguasai 1 (satu) cabang olahraga lainnya", pencapaian: ["Renang selain gaya bebas (Dada/Punggung/Kupu)", "Menguasai 1 cabang olahraga pendukung lainnya"] },
+            20: { teks: "Dapat memahami dan menjelaskan tentang kesehatan reproduksi", pencapaian: ["Menjelaskan pemahaman medis/edukasi kesehatan reproduksi"] },
+            21: { teks: "Dapat mempersiapkan dan melaksanakan upacara umum minimal 3 kali", pencapaian: ["Pelaksanaan upacara umum ke-1", "Pelaksanaan upacara umum ke-2", "Pelaksanaan upacara umum ke-3"] },
+            22: { teks: "Dapat menyebutkan penyebab dan cara pencegahan penyakit infeksi, degeneratif dan penyakit yang disebabkan perilaku tidak sehat", pencapaian: ["Penyebab & pencegahan penyakit infeksi", "Penyebab & pencegahan penyakit degeneratif / perilaku buruk"] }
         };
 
-        // KONTROL OTENTIKASI
-        function handleAuthAction() {
+        const bankMateriSistem = {
+            bantara: [
+                { no: 1, judul: "Rukun Iman, Islam, & Tajhizul Jenazah", isi: "Pendalaman materi Rukun Iman (6) & Islam (5), sholat sunah, tatacara pengurusan jenazah (memandikan, mengkafani, menyolatkan, mengubur), ijab qobul zakat fitrah, serta hafalan hadist sahih pilihan beserta sanadnya." },
+                { no: 13, judul: "Navigasi Darat & Kompas", isi: "Teknik membidik sasaran dengan kompas bidik, menentukan arah mata angin tanpa kompas lewat bayangan matahari/bintang, serta pemahaman tanda jejak internasional." }
+            ],
+            laksana: [
+                { no: 1, judul: "Kepemimpinan Spiritual & Syiar", isi: "Kewajiban menguraikan dasar rukun iman/islam di depan pasukan penggalang, rukun sholat sunah, rukun puasa, aksi riil kepanitiaan amil zakat pangkalan, serta tafsir ayat Al-Qur'an tematik pilihan." },
+                { no: 14, judul: "Veksillologi: Sang Merah Putih", isi: "Sejarah bendera sejak zaman kerajaan nusantara, aturan resmi UU No. 24 Tahun 2009 tentang ukuran, tata cara penaikan/penurunan, penempatan posisi pasca upacara, serta makna filosofis kiasan warna merah putih." },
+                { no: 17, judul: "Teknologi Tepat Guna (TTG)", isi: "Panduan merancang alat sederhana guna membantu hajat hidup masyarakat sekitar (misal: alat penjernih air mekanis, kompos organik drum, atau sistem alarm jebakan banjir berbasis pelampung)." }
+            ]
+        };
+
+        function toggleAdminMode() {
             if (IS_ADMIN) {
                 IS_ADMIN = false;
-                alert("Anda keluar dari mode Admin.");
-                perbaruiTampilanAksesAdmin();
+                alert("Keluar dari Mode Pembina Satuan.");
             } else {
-                modalLoginBootstrap.show();
+                let pass = prompt("Akses Terbatas Pembina.\nSilakan masukkan kode kunci masuk:", "");
+                if (pass === "pembina123") {
+                    IS_ADMIN = true;
+                    alert("Akses Validasi Dibuka! Selamat bertugas Kak.");
+                } else if (pass !== null) {
+                    alert("Kode Kunci Salah!");
+                }
             }
-        }
-
-        function submitLogin() {
-            const user = document.getElementById('login-username').value;
-            const pass = document.getElementById('login-password').value;
-
-            if (user === 'admin' && pass === 'pramuka123') {
-                IS_ADMIN = true;
-                modalLoginBootstrap.hide();
-                alert("Login Berhasil! Akses Tambah, Edit, Hapus data dibuka.");
-                perbaruiTampilanAksesAdmin();
-                document.getElementById('login-password').value = '';
-            } else {
-                alert("Kombinasi Username / Password Salah!");
-            }
+            perbaruiTampilanAksesAdmin();
         }
 
         function perbaruiTampilanAksesAdmin() {
-            const elements = document.querySelectorAll('.admin-only');
-            const statusText = document.getElementById('admin-status-text');
-            const btnAuth = document.getElementById('btn-login-logout');
+            const btns = document.querySelectorAll('.admin-only-btn');
+            const sideName = document.getElementById('side-pembina-name');
+            const sideStatus = document.getElementById('side-pembina-status');
+            const bannerBadge = document.getElementById('banner-mode-badge');
 
-            if (IS_ADMIN) {
-                elements.forEach(el => el.style.setProperty('display', 'block', 'important'));
-                statusText.innerHTML = `<span class="badge bg-success"><i class="fas fa-unlock"></i> ADMIN ACTIVE</span>`;
-                btnAuth.innerHTML = `<i class="fas fa-sign-out-alt"></i> Keluar Admin`;
+            if(IS_ADMIN) {
+                btns.forEach(b => b.style.display = 'block');
+                sideName.textContent = "Pembina Kak Agus";
+                sideStatus.textContent = "Pembina Satuan (Akses Penuh)";
+                bannerBadge.textContent = "Admin Mode: Pembina";
+                bannerBadge.className = "hero-badge bg-warning text-dark";
             } else {
-                elements.forEach(el => el.style.setProperty('display', 'none', 'important'));
-                statusText.innerHTML = `<i class="fas fa-user-lock"></i> Mode Tamu (Read-Only)`;
-                btnAuth.innerHTML = `<i class="fas fa-sign-in-alt"></i> Login Admin`;
+                btns.forEach(b => b.style.display = 'none');
+                sideName.textContent = "Tamu Satuan";
+                sideStatus.textContent = "Mode Baca Saja";
+                bannerBadge.textContent = "Admin Mode: Tamu";
+                bannerBadge.className = "hero-badge bg-secondary text-white";
             }
-            renderTabelSKU(); 
+            renderTabelSKU();
         }
 
-        // KONTROL MANAJEMEN DATA
         function muatDaftarAnggotaDariStorage() {
-            daftarAnggota = JSON.parse(localStorage.getItem('esku_daftar_anggota')) || [];
-            if (daftarAnggota.length === 0) {
-                daftarAnggota = [
-                    { id: 17170001, nama: "Zainal Arifin", gudep: "02.345", sangga: "Perintis", tingkat: ["bantara"], agama: "islam" },
-                    { id: 17170002, nama: "Maria Olivia", gudep: "02.346", sangga: "Pelaksana", tingkat: ["bantara", "laksana"], agama: "katolik" }
-                ];
-                localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
-            }
-            idAnggotaAktif = JSON.parse(localStorage.getItem('esku_id_anggota_aktif')) || daftarAnggota[0].id;
+            daftarAnggota = JSON.parse(localStorage.getItem('esku_v2_daftar')) || [
+                { id: 101, nama: "Zainal Arifin", gudep: "04.081", sangga: "Perintis", tingkat: ["bantara", "laksana"], agama: "islam" },
+                { id: 102, nama: "Maria Olivia", gudep: "04.082", sangga: "Penegas", tingkat: ["bantara"], agama: "katolik" },
+                { id: 103, nama: "I Nyoman Dharma", gudep: "04.081", sangga: "Pelaksana", tingkat: ["bantara", "laksana"], agama: "hindu" }
+            ];
+            localStorage.setItem('esku_v2_daftar', JSON.stringify(daftarAnggota));
+            idAnggotaAktif = daftarAnggota[0].id;
             isiDropdownAnggota();
         }
 
-        function isiDropdownAnggota(filterDaftar = null) {
+        function isiDropdownAnggota(filterData = null) {
             const select = document.getElementById('select-anggota-aktif');
+            if(!select) return;
             select.innerHTML = '';
-            
-            // Menggunakan daftar yang difilter jika ada pencarian, jika tidak gunakan seluruh ambalan
-            const dataLoop = filterDaftar ? filterDaftar : daftarAnggota;
+            const loopData = filterData ? filterData : daftarAnggota;
 
-            if(dataLoop.length === 0) {
+            loopData.forEach(a => {
                 const opt = document.createElement('option');
-                opt.value = "";
-                opt.textContent = "-- Nama Tidak Ditemukan --";
-                select.appendChild(opt);
-                return;
-            }
-
-            dataLoop.forEach(ang => {
-                const opt = document.createElement('option');
-                opt.value = ang.id;
-                const txtTingkat = Array.isArray(ang.tingkat) ? ang.tingkat.map(t => t.toUpperCase()).join(" & ") : ang.tingkat.toUpperCase();
-                opt.textContent = `${ang.nama} [Sangga ${ang.sangga} - ${txtTingkat}]`;
-                if (ang.id == idAnggotaAktif) opt.selected = true;
+                opt.value = a.id;
+                opt.textContent = `${a.nama} [Sangga ${a.sangga}]`;
+                if(a.id == idAnggotaAktif) opt.selected = true;
                 select.appendChild(opt);
             });
             tampilkanProfilAktif();
         }
 
-        // PERUBAHAN: Fungsi filter pencarian nama secara real-time
         function cariNamaAnggotaRealtime() {
-            const keyword = document.getElementById('input-cari-anggota').value.toLowerCase().trim();
-            if (keyword === "") {
-                isiDropdownAnggota();
-                return;
-            }
-
-            const hasilFilter = daftarAnggota.filter(ang => ang.nama.toLowerCase().includes(keyword));
-            
-            // Jika ada hasil, otomatis pindahkan fokus anggota aktif ke baris pertama hasil pencarian
-            if (hasilFilter.length > 0) {
-                idAnggotaAktif = hasilFilter[0].id;
-                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
-            }
-            
-            isiDropdownAnggota(hasilFilter);
+            const kw = document.getElementById('input-cari-anggota').value.toLowerCase();
+            const filtered = daftarAnggota.filter(a => a.nama.toLowerCase().includes(kw));
+            if(filtered.length > 0) { idAnggotaAktif = filtered[0].id; }
+            isiDropdownAnggota(filtered);
         }
 
-        // PERUBAHAN: Fungsi tombol reset pencarian
-        function resetPencarian() {
-            document.getElementById('input-cari-anggota').value = "";
-            muatDaftarAnggotaDariStorage();
+        function gantiAnggotaAktif() {
+            idAnggotaAktif = document.getElementById('select-anggota-aktif').value;
+            tampilkanProfilAktif();
+        }
+
+        function sinkronisasiAgamaKeProfil() {
+            const nilaiAgama = document.getElementById('pilihan-agama').value;
+            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
+            if(anggota) {
+                anggota.agama = nilaiAgama;
+                localStorage.setItem('esku_v2_daftar', JSON.stringify(daftarAnggota));
+                renderTabelSKU();
+            }
         }
 
         function tampilkanProfilAktif() {
             const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
-            if (anggota) {
-                document.getElementById('p-nama').textContent = anggota.nama;
-                document.getElementById('p-gudep').textContent = anggota.gudep;
-                document.getElementById('p-sangga').textContent = anggota.sangga;
-                document.getElementById('pilihan-agama').value = anggota.agama;
-                
-                const selectTingkatDashboard = document.getElementById('pilihan-tingkat');
-                selectTingkatDashboard.innerHTML = '';
-                
-                const listTingkat = Array.isArray(anggota.tingkat) ? anggota.tingkat : [anggota.tingkat];
-                listTingkat.forEach(t => {
+            if(!anggota) return;
+
+            document.getElementById('p-nama').textContent = anggota.nama;
+            document.getElementById('p-gudep').textContent = anggota.gudep;
+            document.getElementById('p-sangga').textContent = anggota.sangga;
+            document.getElementById('pilihan-agama').value = anggota.agama;
+
+            const selectTingkat = document.getElementById('pilihan-tingkat');
+            if(selectTingkat) {
+                selectTingkat.innerHTML = '';
+                anggota.tingkat.forEach(t => {
                     const opt = document.createElement('option');
                     opt.value = t;
-                    opt.textContent = `PENEGAK ${t.toUpperCase()}`;
-                    selectTingkatDashboard.appendChild(opt);
+                    opt.textContent = t.toUpperCase();
+                    selectTingkat.appendChild(opt);
                 });
-                
-                renderTabelSKU();
-            } else {
-                // Bersihkan jika kosong/tidak ditemukan
-                document.getElementById('p-nama').textContent = "-";
-                document.getElementById('p-gudep').textContent = "-";
-                document.getElementById('p-sangga').textContent = "-";
-                document.getElementById('sku-tbody').innerHTML = '<tr><td colspan="5" class="text-center p-4 text-muted">Silakan tentukan atau reset pencarian nama siswa.</td></tr>';
             }
+
+            renderTabelSKU();
         }
 
-        function gantiAnggotaAktif() {
-            const val = document.getElementById('select-anggota-aktif').value;
-            if(!val) return;
-            idAnggotaAktif = val;
-            localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
-            tampilkanProfilAktif();
-        }
+        function renderTabelSKU() {
+            const tbody = document.getElementById('sku-tbody');
+            const selectTingkat = document.getElementById('pilihan-tingkat');
+            if(!tbody || !selectTingkat || !selectTingkat.value) return;
 
-        function bukaModalAnggota(isEdit = false) {
-            if (!IS_ADMIN) {
-                alert("Akses ditolak! Hanya Admin Login yang bisa memanipulasi data.");
-                return;
-            }
-            document.getElementById('form-anggota').reset();
-            document.getElementById('check-bantara').checked = false;
-            document.getElementById('check-laksana').checked = false;
+            const tingkat = selectTingkat.value;
+            const databaseAgamaPilihan = document.getElementById('pilihan-agama').value;
+            const db = tingkat === 'bantara' ? dataBantara : dataLaksana;
+
+            tbody.innerHTML = '';
             
-            if (isEdit) {
-                document.getElementById('modal-anggota-title').textContent = "Ubah Data Profil Anggota";
-                const ang = daftarAnggota.find(a => a.id == idAnggotaAktif);
-                if (ang) {
-                    document.getElementById('form-id-anggota').value = ang.id;
-                    document.getElementById('form-nama').value = ang.nama;
-                    document.getElementById('form-gudep').value = ang.gudep;
-                    document.getElementById('form-sangga').value = ang.sangga;
-                    document.getElementById('form-agama').value = ang.agama;
+            Object.keys(db).forEach(no => {
+                const item = db[no];
+                const list = item.isAgama ? item.subAgama[databaseAgamaPilihan] : item.pencapaian;
+
+                if (!list) return;
+
+                const trHead = document.createElement('tr');
+                trHead.className = "row-main-soal";
+                trHead.innerHTML = `<td class="text-center">NO. ${no}</td><td colspan="4">${item.teks.toUpperCase()}</td>`;
+                tbody.appendChild(trHead);
+
+                list.forEach((sub, idx) => {
+                    const storageKey = `esku_v2_save_${idAnggotaAktif}_${tingkat}_${no}_${idx}`;
+                    const saved = JSON.parse(localStorage.getItem(storageKey)) || { status:false, tgl:'', pgi:'' };
                     
-                    const listTingkat = Array.isArray(ang.tingkat) ? ang.tingkat : [ang.tingkat];
-                    if(listTingkat.includes('bantara')) document.getElementById('check-bantara').checked = true;
-                    if(listTingkat.includes('laksana')) document.getElementById('check-laksana').checked = true;
+                    const isChecked = saved.status ? 'checked' : '';
+                    const disabledAttr = IS_ADMIN ? '' : 'disabled';
+
+                    const trSub = document.createElement('tr');
+                    trSub.innerHTML = `
+                        <td class="text-center text-muted">${no}.${idx+1}</td>
+                        <td>${sub}</td>
+                        <td class="text-center">
+                            <div class="form-check form-switch d-inline-block">
+                                <input class="form-check-input" type="checkbox" ${isChecked} ${disabledAttr} onchange="saveProgress(${no}, ${idx}, this.checked)">
+                            </div>
+                        </td>
+                        <td><input type="date" class="form-control form-control-sm" value="${saved.tgl}" ${disabledAttr} onchange="saveMeta(${no}, ${idx}, 'tgl', this.value)"></td>
+                        <td><input type="text" class="form-control form-control-sm" placeholder="Nama Pembina" value="${saved.pgi}" ${disabledAttr} onchange="saveMeta(${no}, ${idx}, 'pgi', this.value)"></td>
+                    `;
+                    tbody.appendChild(trSub);
+                });
+            });
+
+            hitungSemuaStatistik();
+        }
+
+        function saveProgress(no, idx, val) {
+            const tingkat = document.getElementById('pilihan-tingkat').value;
+            const storageKey = `esku_v2_save_${idAnggotaAktif}_${tingkat}_${no}_${idx}`;
+            let data = JSON.parse(localStorage.getItem(storageKey)) || { status:false, tgl:'', pgi:'' };
+            data.status = val;
+            if(val && !data.tgl) data.tgl = new Date().toISOString().substring(0,10);
+            localStorage.setItem(storageKey, JSON.stringify(data));
+            renderTabelSKU();
+        }
+
+        function saveMeta(no, idx, key, val) {
+            const tingkat = document.getElementById('pilihan-tingkat').value;
+            const storageKey = `esku_v2_save_${idAnggotaAktif}_${tingkat}_${no}_${idx}`;
+            let data = JSON.parse(localStorage.getItem(storageKey)) || { status:false, tgl:'', pgi:'' };
+            data[key] = val;
+            localStorage.setItem(storageKey, JSON.stringify(data));
+            hitungSemuaStatistik();
+        }
+
+        function hitungSemuaStatistik() {
+            let totalSiswa = daftarAnggota.length;
+            let siapLantik = 0;
+            let totalPersenKumulatif = 0;
+
+            const widgetSiswa = document.getElementById('widget-total-siswa');
+            if(widgetSiswa) widgetSiswa.textContent = `${totalSiswa} Siswa`;
+
+            const rekapTbody = document.getElementById('rekap-tbody');
+            if(!rekapTbody) return;
+            rekapTbody.innerHTML = '';
+
+            daftarAnggota.forEach((siswa, index) => {
+                let tingkatHitung = siswa.tingkat[siswa.tingkat.length - 1]; 
+                let db = tingkatHitung === 'bantara' ? dataBantara : dataLaksana;
+                
+                let maxButir = 0;
+                let lulusButir = 0;
+
+                Object.keys(db).forEach(no => {
+                    let item = db[no];
+                    let list = item.isAgama ? item.subAgama[siswa.agama] : item.pencapaian;
+                    if(list) {
+                        list.forEach((_, idx) => {
+                            maxButir++;
+                            let saved = JSON.parse(localStorage.getItem(`esku_v2_save_${siswa.id}_${tingkatHitung}_${no}_${idx}`));
+                            if(saved && saved.status) lulusButir++;
+                        });
+                    }
+                });
+
+                let persen = maxButir > 0 ? Math.round((lulusButir/maxButir)*100) : 0;
+                totalPersenKumulatif += persen;
+                if(persen === 100) siapLantik++;
+
+                if(siswa.id == idAnggotaAktif) {
+                    const selectTingkat = document.getElementById('pilihan-tingkat');
+                    if(selectTingkat && selectTingkat.value !== tingkatHitung) {
+                        let tingkatAktifSekarang = selectTingkat.value;
+                        let dbAktif = tingkatAktifSekarang === 'bantara' ? dataBantara : dataLaksana;
+                        let maxB = 0, lulusB = 0;
+                        Object.keys(dbAktif).forEach(no => {
+                            let item = dbAktif[no];
+                            let list = item.isAgama ? item.subAgama[siswa.agama] : item.pencapaian;
+                            if(list) {
+                                list.forEach((_, idx) => {
+                                    maxB++;
+                                    let saved = JSON.parse(localStorage.getItem(`esku_v2_save_${siswa.id}_${tingkatAktifSekarang}_${no}_${idx}`));
+                                    if(saved && saved.status) lulusB++;
+                                });
+                            }
+                        });
+                        let persenAktif = maxB > 0 ? Math.round((lulusB/maxB)*100) : 0;
+                        document.getElementById('progress-bar').style.width = `${persenAktif}%`;
+                        document.getElementById('progress-bar').textContent = `${persenAktif}%`;
+                        document.getElementById('stat-count').textContent = `${lulusB} / ${maxB} Indikator`;
+                    } else {
+                        const pb = document.getElementById('progress-bar');
+                        if(pb) { pb.style.width = `${persen}%`; pb.textContent = `${persen}%`; }
+                        const sc = document.getElementById('stat-count');
+                        if(sc) sc.textContent = `${lulusButir} / ${maxButir} Indikator`;
+                    }
                 }
-            } else {
-                document.getElementById('modal-anggota-title').textContent = "Tambah Anggota Pramuka Baru";
-                document.getElementById('form-id-anggota').value = '';
-                document.getElementById('check-bantara').checked = true;
+
+                const tr = document.createElement('tr');
+                if(siswa.id == idAnggotaAktif) tr.className = 'table-warning fw-bold';
+                tr.innerHTML = `
+                    <td class="text-center">${index+1}</td>
+                    <td>${siswa.nama}</td>
+                    <td>Sangga ${siswa.sangga}</td>
+                    <td class="text-center"><span class="badge bg-dark">${tingkatHitung.toUpperCase()}</span></td>
+                    <td class="text-center">${lulusButir}/${maxButir} Butir</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress w-100" style="height:8px;"><div class="progress-bar bg-success" style="width:${persen}%"></div></div>
+                            <span class="small fw-bold">${persen}%</span>
+                        </div>
+                    </td>
+                    <td class="text-center"><button class="btn btn-xs btn-primary py-0 px-2" onclick="pilihSiswaSaja(${siswa.id})"><i class="fas fa-folder-open"></i></button></td>
+                `;
+                rekapTbody.appendChild(tr);
+            });
+
+            const widgetLantik = document.getElementById('widget-siap-lantik');
+            if(widgetLantik) widgetLantik.textContent = `${siapLantik} Siswa`;
+            
+            let rataRata = totalSiswa > 0 ? Math.round(totalPersenKumulatif / totalSiswa) : 0;
+            const widgetProgres = document.getElementById('widget-rata-progres');
+            if(widgetProgres) widgetProgres.textContent = `${rataRata}%`;
+        }
+
+        function pilihSiswaSaja(id) {
+            idAnggotaAktif = id;
+            document.getElementById('select-anggota-aktif').value = id;
+            tampilkanProfilAktif();
+            switchSection('matriks');
+        }
+
+        function renderMateriEksklusif(tingkat) {
+            const container = document.getElementById('materi-render-box');
+            container.innerHTML = '';
+            
+            const dataMateri = bankMateriSistem[tingkat];
+            dataMateri.forEach(m => {
+                const div = document.createElement('div');
+                div.className = "materi-item shadow-sm";
+                div.innerHTML = `
+                    <h6 class="fw-bold text-dark mb-1">SKU No. ${m.no} - ${m.judul}</h6>
+                    <p class="small text-secondary mb-0" style="text-align: justify; line-height:1.5;">${m.isi}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function switchSection(target) {
+            document.querySelectorAll('.nav-item-custom').forEach(i => i.classList.remove('active'));
+            document.getElementById('menu-' + target).classList.add('active');
+
+            const headerTitle = document.getElementById('header-section-title');
+
+            if(target === 'dashboard') {
+                headerTitle.textContent = "DASHBOARD BASECAMP";
+                document.getElementById('pane-hero-banner').style.display = 'block';
+                document.getElementById('pane-widgets').style.display = 'flex';
+                document.getElementById('pane-selector-nav').style.display = 'block';
+                document.getElementById('section-profil-box').style.display = 'block';
+                document.getElementById('section-tabel-sku').style.display = 'none'; 
+                document.getElementById('section-rekap-ambalan').style.display = 'block';
+                document.getElementById('section-buku-materi').style.display = 'none';
+            } else if (target === 'matriks') {
+                headerTitle.textContent = "BUKU SKU KENDALI INDIVIDU";
+                document.getElementById('pane-hero-banner').style.display = 'none';
+                document.getElementById('pane-widgets').style.display = 'none';
+                document.getElementById('pane-selector-nav').style.display = 'block';
+                document.getElementById('section-profil-box').style.display = 'block';
+                document.getElementById('section-tabel-sku').style.display = 'block'; 
+                document.getElementById('section-rekap-ambalan').style.display = 'none';
+                document.getElementById('section-buku-materi').style.display = 'none';
+            } else if (target === 'rekap') {
+                headerTitle.textContent = "VALIDASI CAPAIAN AMBALAN";
+                document.getElementById('pane-hero-banner').style.display = 'none';
+                document.getElementById('pane-widgets').style.display = 'none';
+                document.getElementById('pane-selector-nav').style.display = 'none';
+                document.getElementById('section-profil-box').style.display = 'none';
+                document.getElementById('section-tabel-sku').style.display = 'none';
+                document.getElementById('section-rekap-ambalan').style.display = 'block';
+                document.getElementById('section-buku-materi').style.display = 'none';
+            } else if (target === 'materi') {
+                headerTitle.textContent = "PANDUAN BUKU MATERI PRAMUKA";
+                document.getElementById('pane-hero-banner').style.display = 'none';
+                document.getElementById('pane-widgets').style.display = 'none';
+                document.getElementById('pane-selector-nav').style.display = 'none';
+                document.getElementById('section-profil-box').style.display = 'none';
+                document.getElementById('section-tabel-sku').style.display = 'none';
+                document.getElementById('section-rekap-ambalan').style.display = 'none';
+                document.getElementById('section-buku-materi').style.display = 'block';
+                renderMateriEksklusif('bantara');
             }
+        }
+
+        function bukaModalAnggota() {
             modalAnggotaBootstrap.show();
         }
 
         document.getElementById('form-anggota').onsubmit = function(e) {
             e.preventDefault();
-            if (!IS_ADMIN) {
-                alert("Akses Ilegal! Anda tidak memiliki hak menyimpan data.");
-                return;
-            }
-            
-            const id = document.getElementById('form-id-anggota').value;
             const nama = document.getElementById('form-nama').value;
             const gudep = document.getElementById('form-gudep').value;
             const sangga = document.getElementById('form-sangga').value;
@@ -477,191 +1074,29 @@
             let tingkat = [];
             if(document.getElementById('check-bantara').checked) tingkat.push('bantara');
             if(document.getElementById('check-laksana').checked) tingkat.push('laksana');
-            
+
             if(tingkat.length === 0) {
-                alert("Gagal! Minimal pilih salah satu tingkatan (Bantara / Laksana) dengan mencentangnya.");
+                alert('Pilih minimal satu tingkatan!');
                 return;
             }
 
-            if (id) {
-                const idx = daftarAnggota.findIndex(a => a.id == id);
-                if(idx !== -1) {
-                    daftarAnggota[idx] = { id: parseInt(id), nama, gudep, sangga, tingkat, agama };
-                }
-            } else {
-                const idBaru = Date.now();
-                daftarAnggota.push({ id: idBaru, nama, gudep, sangga, tingkat, agama });
-                idAnggotaAktif = idBaru;
-                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
-            }
-
-            localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
-            modalAnggotaBootstrap.hide();
-            document.getElementById('input-cari-anggota').value = ""; // bersihkan pencarian saat simpan
+            const baru = { id: Date.now(), nama, gudep, sangga, tingkat, agama };
+            daftarAnggota.push(baru);
+            localStorage.setItem('esku_v2_daftar', JSON.stringify(daftarAnggota));
+            idAnggotaAktif = baru.id;
+            
             isiDropdownAnggota();
-            alert("Data Berhasil Disimpan!");
-        };
-
-        function hapusAnggotaAktif() {
-            if (!IS_ADMIN) {
-                alert("Akses ditolak! Anda tidak berhak menghapus data anggota.");
-                return;
-            }
-            if (daftarAnggota.length <= 1) {
-                alert("Minimal harus ada 1 nama anggota di aplikasi.");
-                return;
-            }
-            if (confirm(`Hapus data anggota "${document.getElementById('p-nama').textContent}" secara permanen?`)) {
-                daftarAnggota = daftarAnggota.filter(a => a.id != idAnggotaAktif);
-                localStorage.setItem('esku_daftar_anggota', JSON.stringify(daftarAnggota));
-                idAnggotaAktif = daftarAnggota[0].id;
-                localStorage.setItem('esku_id_anggota_aktif', JSON.stringify(idAnggotaAktif));
-                document.getElementById('input-cari-anggota').value = "";
-                isiDropdownAnggota();
-                alert("Data Anggota berhasil dihapus.");
-            }
-        }
-
-        // RENDER DATA MATRIKS SKU
-        function renderTabelSKU() {
-            const tbody = document.getElementById('sku-tbody');
-            const selectTingkat = document.getElementById('pilihan-tingkat');
-            
-            if(!selectTingkat || !selectTingkat.value) return; 
-            
-            const tingkat = selectTingkat.value;
-            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
-            if(!anggota) return;
-            
-            const agama = anggota.agama;
-
-            tbody.innerHTML = '';
-            const db = (tingkat === 'bantara') ? dataBantara : dataLaksana;
-            const limitLoop = (tingkat === 'bantara') ? 23 : 22;
-
-            document.getElementById('table-badge-tingkat').textContent = tingkat.toUpperCase();
-            document.getElementById('table-badge-tingkat').className = (tingkat === 'laksana') ? "badge bg-danger text-white fw-bold" : "badge bg-warning text-dark fw-bold";
-
-            for (let i = 1; i <= limitLoop; i++) {
-                const item = db[i];
-                let listPertanyaan = item.isAgama ? item.subAgama[agama] : item.pencapaian;
-
-                const mainRow = document.createElement('tr');
-                mainRow.className = "row-main-soal text-dark";
-                mainRow.innerHTML = `
-                    <td class="text-center bg-secondary text-white fw-bold">NO. ${i}</td>
-                    <td colspan="4" class="text-uppercase bg-light p-2 small">${item.teks} ${item.isAgama ? '(' + agama.toUpperCase() + ')' : ''}</td>
-                `;
-                tbody.appendChild(mainRow);
-
-                listPertanyaan.forEach((pertanyaan, idx) => {
-                    const keyStorage = `esku_user_${idAnggotaAktif}_${tingkat}_soal_${i}_idx_${idx}`;
-                    const saved = JSON.parse(localStorage.getItem(keyStorage)) || { status: false, tanggal: '', penguji: '' };
-
-                    const subRow = document.createElement('tr');
-                    const isChecked = saved.status ? 'checked' : '';
-                    const lblClass = saved.status ? 'text-success fw-bold' : 'text-muted';
-                    const lblText = saved.status ? 'LULUS' : 'BELUM';
-                    
-                    const isDisabledAttr = IS_ADMIN ? '' : 'disabled';
-
-                    subRow.innerHTML = `
-                        <td class="text-center text-muted small fw-bold">${i}.${idx + 1}</td>
-                        <td class="ps-4 text-secondary small">${pertanyaan}</td>
-                        <td class="text-center">
-                            <div class="form-check form-switch d-inline-block no-print">
-                                <input class="form-check-input" type="checkbox" id="status-${i}-${idx}" ${isChecked} ${isDisabledAttr} onchange="saveVervalPertanyaan(${i}, ${idx})">
-                                <label class="form-check-label small ${lblClass}" id="label-${i}-${idx}" for="status-${i}-${idx}">${lblText}</label>
-                            </div>
-                            <span class="print-text fw-bold text-sm">${saved.status ? 'LULUS' : 'BELUM'}</span>
-                        </td>
-                        <td>
-                            <input type="date" id="tanggal-${i}-${idx}" class="form-control form-control-sm text-center" value="${saved.tanggal}" ${isDisabledAttr} onchange="saveVervalPertanyaan(${i}, ${idx})">
-                            <span class="print-text text-center d-block small">${saved.tanggal}</span>
-                        </td>
-                        <td>
-                            <input type="text" id="penguji-${i}-${idx}" class="form-control form-control-sm" placeholder="Nama Pembina" value="${saved.penguji}" ${isDisabledAttr} oninput="saveVervalPertanyaan(${i}, ${idx})">
-                            <span class="print-text d-block small">${saved.penguji}</span>
-                        </td>
-                    `;
-                    tbody.appendChild(subRow);
-                });
-            }
-            hitungProgresKelelulusan();
-        }
-
-        function saveVervalPertanyaan(noSoal, indeks) {
-            if(!IS_ADMIN) {
-                alert("Akses Ilegal! Pengisian data terkunci.");
-                return;
-            }
-
-            const tingkat = document.getElementById('pilihan-tingkat').value;
-            const isChecked = document.getElementById(`status-${noSoal}-${indeks}`).checked;
-            const tgl = document.getElementById(`tanggal-${noSoal}-${indeks}`).value;
-            const penguji = document.getElementById(`penguji-${noSoal}-${indeks}`).value;
-
-            let tglFinal = tgl;
-            if (isChecked && !tgl) {
-                tglFinal = new Date().toISOString().substring(0, 10);
-                document.getElementById(`tanggal-${noSoal}-${indeks}`).value = tglFinal;
-            }
-
-            const label = document.getElementById(`label-${noSoal}-${indeks}`);
-            label.textContent = isChecked ? 'LULUS' : 'BELUM';
-            label.className = isChecked ? 'form-check-label small text-success fw-bold' : 'form-check-label small text-muted';
-
-            const payload = { status: isChecked, tanggal: tglFinal, penguji: penguji };
-            localStorage.setItem(`esku_user_${idAnggotaAktif}_${tingkat}_soal_${noSoal}_idx_${indeks}`, JSON.stringify(payload));
-
-            hitungProgresKelelulusan();
-        }
-
-        function hitungProgresKelelulusan() {
-            if(!idAnggotaAktif) return;
-            const selectTingkat = document.getElementById('pilihan-tingkat');
-            if(!selectTingkat || !selectTingkat.value) return;
-
-            const tingkat = selectTingkat.value;
-            const anggota = daftarAnggota.find(a => a.id == idAnggotaAktif);
-            if(!anggota) return;
-
-            const agama = anggota.agama;
-            const db = (tingkat === 'bantara') ? dataBantara : dataLaksana;
-            const limitLoop = (tingkat === 'bantara') ? 23 : 22;
-
-            let totalIndikator = 0;
-            let lulusCount = 0;
-
-            for (let i = 1; i <= limitLoop; i++) {
-                const item = db[i];
-                const panjang = item.isAgama ? item.subAgama[agama].length : item.pencapaian.length;
-
-                for (let idx = 0; idx < panjang; idx++) {
-                    totalIndikator++;
-                    const saved = JSON.parse(localStorage.getItem(`esku_user_${idAnggotaAktif}_${tingkat}_soal_${i}_idx_${idx}`));
-                    if (saved && saved.status === true) {
-                        lulusCount++;
-                    }
-                }
-            }
-
-            const persen = totalIndikator > 0 ? Math.round((lulusCount / totalIndikator) * 100) : 0;
-            const pb = document.getElementById('progress-bar');
-            if(pb) {
-                pb.style.width = `${persen}%`;
-                pb.textContent = `${persen}%`;
-            }
-            const stat = document.getElementById('stat-count');
-            if(stat) stat.textContent = `${lulusCount} / ${totalIndikator} Butir Terisi`;
+            modalAnggotaBootstrap.hide();
+            document.getElementById('form-anggota').reset();
+            alert("Siswa Berhasil Didaftarkan ke Sistem!");
         }
 
         window.onload = function() {
-            modalLoginBootstrap = new bootstrap.Modal(document.getElementById('modalLogin'));
             modalAnggotaBootstrap = new bootstrap.Modal(document.getElementById('modalAnggota'));
             muatDaftarAnggotaDariStorage();
+            switchSection('dashboard');
             perbaruiTampilanAksesAdmin();
-        };
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
