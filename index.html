@@ -317,8 +317,10 @@
     <!-- SIDEBAR LEFT PANELS -->
     <div class="sidebar no-print">
         <div>
-            <div class="brand-logo">
-                <div class="brand-icon"><i class="fas fa-fire"></i></div>
+           <div class="brand-logo" style="display: flex; align-items: center; padding: 20px 15px; margin-bottom: 20px;">
+    <img src="https://lh3.googleusercontent.com/d/15ShPoCxRwpi_Sd--UDldv6R850R8ZzAx" 
+         alt="Logo" 
+         style="width: 40px; height: 40px; object-fit: contain; margin-right: 12px;">
                 PRAMUKA<span>SMART</span>
             </div>
             
@@ -504,8 +506,16 @@
 
         <!-- SECTION BUKU MATERI PRAMUKA PENEGAK -->
         <div class="section-card" id="section-buku-materi" style="display: none;">
-            <div class="section-title"><i class="fas fa-graduation-cap text-primary"></i> Ensiklopedia Materi SKU Penegak (Panduan Resmi)</div>
-            <p class="text-muted small mb-4">Pilih tingkatan di bawah untuk menampilkan rangkuman materi pokok penyelesaian indikator SKU:</p>
+            <section id="section-buku-materi" class="content-section" style="display: none;">
+    <h2 class="mb-4">Buku Materi Pramuka</h2>
+    
+    <div id="list-materi-container" class="row">
+        </div>
+    
+    <div class="admin-only-btn mt-4">
+        <button class="btn btn-primary" onclick="bukaModalMateri()">+ Tambah Materi Baru</button>
+    </div>
+</section>
             
             <div class="d-flex gap-2 mb-4">
                 <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="renderMateriEksklusif('bantara')">Materi Penegak Bantara</button>
@@ -513,6 +523,25 @@
             </div>
 
             <div id="materi-render-box"></div>
+		<div class="admin-only-btn mb-3">
+    <button class="btn btn-primary" onclick="bukaModalMateri()">+ Tambah Materi Baru</button>
+</div>
+
+<div class="modal fade" id="modalMateri" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Input Materi Pramuka</h5></div>
+            <div class="modal-body">
+                <form id="form-materi">
+                    <input type="text" id="materi-judul" class="form-control mb-2" placeholder="Judul Materi" required>
+                    <textarea id="materi-isi" class="form-control mb-2" placeholder="Isi materi atau Link Google Drive/PDF" required></textarea>
+                    <button type="submit" class="btn btn-success w-100">Simpan Materi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+		
         </div>
 
     </div>
@@ -578,6 +607,39 @@
 
     <!-- JS ENGINE IMPLEMENTATION -->
     <script>
+		// Simpan list materi di localStorage
+let daftarMateri = JSON.parse(localStorage.getItem('materi_pramuka')) || [];
+
+function bukaModalMateri() {
+    new bootstrap.Modal(document.getElementById('modalMateri')).show();
+}
+
+document.getElementById('form-materi').onsubmit = function(e) {
+    e.preventDefault();
+    const judul = document.getElementById('materi-judul').value;
+    const isi = document.getElementById('materi-isi').value;
+    
+    daftarMateri.push({ judul, isi });
+    localStorage.setItem('materi_pramuka', JSON.stringify(daftarMateri));
+    
+    alert("Materi berhasil disimpan!");
+    renderMateri(); // Fungsi untuk menampilkan materi
+    document.getElementById('modalMateri').querySelector('.btn-close').click();
+};
+
+function renderMateri() {
+    const container = document.getElementById('list-materi-container'); // Pastikan div ini ada di HTML
+    container.innerHTML = daftarMateri.map(m => `
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>${m.judul}</h5>
+                <p>${m.isi}</p>
+            </div>
+        </div>
+    `).join('');
+}
+	
+	
         let IS_ADMIN = false;
         let daftarAnggota = [];
         let idAnggotaAktif = null;
@@ -747,7 +809,7 @@
 
             if(IS_ADMIN) {
                 btns.forEach(b => b.style.display = 'block');
-                sideName.textContent = "Pembina Kak Agus";
+                sideName.textContent = "Pembina Kak Basuni";
                 sideStatus.textContent = "Pembina Satuan (Akses Penuh)";
                 bannerBadge.textContent = "Admin Mode: Pembina";
                 bannerBadge.className = "hero-badge bg-warning text-dark";
